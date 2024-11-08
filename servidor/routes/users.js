@@ -1,18 +1,20 @@
 const express = require('express');
 const User = require('../models/User');
 const router = express.Router();
+const bcrypt = require('bcrypt');
 
 // Endpoint para criar um novo usuário
 router.post('/register', async (req, res) => {
-    try{
-        const { username, email, password } = req.body;
-        const user = new User({ username, email, password });
-        await user.save();
-        res.status(201).send(user);
-    }catch (error){
-        res.status(400).json({ error: 'Erro ao cadastrar usuário' });
+    try {
+      const { username, email, password } = req.body;
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = new User({ username, email, password: hashedPassword });
+      await user.save();
+      res.status(201).json({ message: 'Usuário cadastrado com sucesso!' });
+    } catch (error) {
+      res.status(400).json({ error: 'Erro ao cadastrar usuário' });
     }
-});
+  });
 
 // Endpoint para login
 router.post('/login', async (req, res) => {
