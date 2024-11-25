@@ -51,14 +51,14 @@ const RideForm = ({ rideId, onFormSubmit }) => {
     <form onSubmit={handleSubmit}>
       <input
         name="origin"
-        value={rideData.origin}
+        value={rideData.origin.toLowerCase()}
         onChange={handleChange}
         placeholder="Origem"
         required
       />
       <input
         name="destination"
-        value={rideData.destination}
+        value={rideData.destination.toLowerCase()}
         onChange={handleChange}
         placeholder="Destino"
         required
