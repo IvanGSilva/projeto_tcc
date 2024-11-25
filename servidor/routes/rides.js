@@ -1,27 +1,46 @@
 const express = require('express');
 const Ride = require('../models/Ride');
+const User = require('../models/User');
 const router = express.Router();
 
-// Endpoint para criar uma nova viagem
-router.post('/', async (req, res) => {
-  try {
-    const ride = new Ride(req.body);
-    await ride.save();
-    res.status(201).send(ride);
-  } catch (error) {
-    res.status(400).send({ error: error.message });
-  }
-});
-
-// Endpoint para listar todas as viagens
-router.get('/', async (req, res) => {
-  try {
-    const rides = await Ride.find();
-    res.status(200).send(rides);
-  } catch (error) {
-    res.status(500).send({ error: error.message });
-  }
-});
+// Middleware para verificar se o usuário está autenticado
+const isAuthenticated = (req, res, next) => {
+    if (!req.session.userId) {
+      return res.status(401).send({ error: 'Usuário não autenticado' });
+    }
+    next();
+  };
+  
+  // Endpoint para criar uma nova viagem
+  router.post('/', isAuthenticated, async (req, res) => {
+    try {
+      // Verificar se o usuário está autenticado
+      if (!req.session.userId) {
+        return res.status(401).send({ error: 'Usuário não autenticado' });
+      }
+  
+      const rideData = { ...req.body, driver: req.session.userId };
+  
+      const ride = new Ride(rideData);
+  
+      await ride.save();
+  
+      res.status(201).send(ride);
+    } catch (error) {
+      res.status(400).send({ error: error.message });
+    }
+  });
+  
+  // Endpoint para listar as viagens do motorista logado
+  router.get('/', isAuthenticated, async (req, res) => {
+    try {
+      const rides = await Ride.find({ driver: req.session.userId });
+      
+      res.status(200).json(rides);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
 
 // Endpoint para buscar caronas com filtros de origem, destino e data
 router.get('/search', async (req, res) => {
