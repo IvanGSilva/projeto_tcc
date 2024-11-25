@@ -8,6 +8,16 @@ const api = axios.create({
     baseURL: 'http://localhost:5000/api', // URL do seu servidor Express
 });
 
+// Função para buscar as caronas por origem e destino
+export const searchRides = async (filters) => {
+    try {
+        const response = await axios.get(`${API_URL}/search`, { params: filters });
+        return response.data;
+    } catch (error) {
+        throw error.response.data;
+    }
+};  
+
 // Função para criar uma nova carona
 export const createRide = async (rideData) => {
     const response = await axios.post(API_URL, rideData);
@@ -37,7 +47,7 @@ export const deleteRide = async (id) => {
     await axios.delete(`${API_URL}/${id}`);
 };
 
-// Se você quiser exportar todas as funções juntas (opcional)
+// Exportar todas as funções juntas
 export default {
     api,
     createRide,
