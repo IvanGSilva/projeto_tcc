@@ -1,6 +1,6 @@
-// components/Home.js
 import React, { useState } from 'react';
 import { searchRides } from '../../services/api'; // Função para buscar as viagens
+import styles from './Home.module.css';
 
 const Home = () => {
   const [origin, setOrigin] = useState('');
@@ -27,28 +27,28 @@ const Home = () => {
   };
 
   return (
-    <div>
-      <h2>Encontre Caronas</h2>
-      <input
+    <div className={styles.container}>
+      <h2 className={styles.title}>Encontre Caronas</h2>
+      <input className={styles.input}
         type="text"
         placeholder="Onde você está agora?"
         value={origin}
         onChange={(e) => setOrigin(e.target.value)}
       />
-      <input
+      <input className={styles.input}
         type="text"
         placeholder="Para onde você vai?"
         value={destination}
         onChange={(e) => setDestination(e.target.value)}
       />
-      <button onClick={handleSearch} disabled={loading}>
+      <button className={styles.button} onClick={handleSearch} disabled={loading}>
         {loading ? 'Carregando...' : 'Buscar'}
       </button>
 
       <h3>Resultados:</h3>
-      <ul>
+      <ul className={styles.list}>
         {rides.map((ride) => (
-          <li key={ride._id}>
+          <li className={styles.listItem} key={ride._id}>
             {ride.origin} - {ride.destination} - {ride.date}
           </li>
         ))}
