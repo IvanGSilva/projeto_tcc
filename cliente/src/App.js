@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import UserProfile from './components/UserProfile/UserProfile';
+import RideForm from './components/RideForm/RideForm';
 import Home from './components/Home/Home'; // Componente da página inicial com pesquisa
 import styles from './App.module.css';
 
@@ -23,11 +24,15 @@ const App = () => {
   };
 
   const goToProfile = () => {
-    setCurrentPage('profile');
+    setCurrentPage('profile'); // Redireciona para o perfil do usuário
+  };
+
+  const goToRideForm = () => {
+    setCurrentPage('rideForm'); // Redireciona para o formulário para oferecer uma carona
   };
 
   const goToHome = () => {
-    setCurrentPage('home');
+    setCurrentPage('home'); // Redireciona para a home da aplicação quando já logado
   };
 
   const goToRegister = () => {
@@ -60,6 +65,9 @@ const App = () => {
                 <button className={styles.navButton} onClick={goToHome}>Página Inicial</button>
               </li>
               <li className={styles.navItem}>
+                <button className={styles.navButton} onClick={goToRideForm}>Ofereça uma carona</button>
+              </li>
+              <li className={styles.navItem}>
                 <button className={styles.navButton} onClick={goToProfile}>Perfil</button>
               </li>
               <li className={styles.navItem}>
@@ -72,6 +80,7 @@ const App = () => {
 
       {/* Conteúdo Dinâmico com base no estado */}
       {currentPage === 'home' && isAuthenticated && <Home />}
+      {currentPage === 'rideForm' && isAuthenticated && <RideForm />}
       {currentPage === 'profile' && isAuthenticated && <UserProfile onLogout={handleLogout} />}
     </div>
   );
