@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import styles from './Register.module.css';
 
 const Register = ({ onBack }) => {
   const [username, setName] = useState('');
@@ -26,33 +27,33 @@ const Register = ({ onBack }) => {
   };
 
   return (
-    <div>
+    <div className={styles.container}>
       <h2>Cadastro</h2>
       <form onSubmit={handleRegister}>
-        <input
+        <input className={styles.input}
           type="text"
           placeholder="Nome de Usuário"
           value={username}
           onChange={(e) => setName(e.target.value)}
           required
         />
-        <input
+        <input className={styles.input}
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <input
+        <input className={styles.input}
           type="password"
           placeholder="Senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Cadastrar</button>
+        <button type="submit" className={styles.button}>Cadastrar</button>
       </form>
-      <button onClick={onBack}>Voltar ao Login</button>
+      <button className={styles.button} onClick={onBack}>Voltar ao Login</button>
     </div>
   );
 };
