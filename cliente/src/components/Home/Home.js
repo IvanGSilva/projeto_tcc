@@ -1,6 +1,6 @@
 // components/Home.js
 import React, { useState } from 'react';
-import { searchRides } from '../services/api'; // Função para buscar as viagens
+import { searchRides } from '../../services/api'; // Função para buscar as viagens
 
 const Home = () => {
   const [origin, setOrigin] = useState('');

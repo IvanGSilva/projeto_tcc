@@ -1,6 +1,6 @@
 // components/RideForm.js
 import React, { useState, useEffect } from 'react';
-import { createRide, getRideById, updateRide } from '../services/api';
+import { createRide, getRideById, updateRide } from '../../services/api';
 
 const RideForm = ({ rideId, onFormSubmit }) => {
   const [rideData, setRideData] = useState({
