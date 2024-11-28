@@ -18,14 +18,7 @@ const UserProfile = ({ onLogout }) => {
         fetchUserData(); // Chama a função para buscar os dados do usuário ao montar o componente
     }, []);
 
-    const handleLogout = async () => {
-        try {
-            await axios.post('http://localhost:5000/api/users/logout', {}, { withCredentials: true });
-            onLogout();
-        } catch (error) {
-            console.error('Erro ao fazer logout:', error);
-        }
-    };
+    
 
     return (
         <div>
@@ -34,7 +27,6 @@ const UserProfile = ({ onLogout }) => {
                 <>
                     <p><strong>Nome:</strong> {userData.name}</p>
                     <p><strong>Email:</strong> {userData.email}</p>
-                    <button onClick={handleLogout}>Logout</button>
                 </>
             ) : (
                 <p>Carregando...</p>
