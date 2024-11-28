@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import Login from './components/Login';
-import Register from './components/Register';
-import UserProfile from './components/UserProfile';
-import Home from './components/Home'; // Componente da página inicial com pesquisa
+import Login from './components/Login/Login';
+import Register from './components/Register/Register';
+import UserProfile from './components/UserProfile/UserProfile';
+import Home from './components/Home/Home'; // Componente da página inicial com pesquisa
+import styles from './App.module.css';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -38,14 +39,14 @@ const App = () => {
   };
 
   return (
-    <div>
-      <h1>Clone do BlaBlaCar</h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Clone do BlaBlaCar</h1>
 
       {/* Menu de navegação */}
-      <nav>
-        <ul>
+      <nav className={styles.nav}>
+        <ul className={styles.navList}>
           {!isAuthenticated ? (
-            <li>
+            <li className={styles.navItem}>
               {/* Exibe a tela de login ou registro, dependendo do estado */}
               {showRegister ? (
                 <Register onBack={goToLogin} />
@@ -55,14 +56,14 @@ const App = () => {
             </li>
           ) : (
             <>
-              <li>
-                <button onClick={goToHome}>Página Inicial</button>
+              <li className={styles.navItem}>
+                <button className={styles.navButton} onClick={goToHome}>Página Inicial</button>
               </li>
-              <li>
-                <button onClick={goToProfile}>Perfil</button>
+              <li className={styles.navItem}>
+                <button className={styles.navButton} onClick={goToProfile}>Perfil</button>
               </li>
-              <li>
-                <button onClick={handleLogout}>Logout</button>
+              <li className={styles.navItem}>
+                <button className={styles.navButton} onClick={handleLogout}>Logout</button>
               </li>
             </>
           )}
