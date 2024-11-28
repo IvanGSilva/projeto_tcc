@@ -6,14 +6,6 @@
     margin: 20px;
   }
   
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-width: 400px;
-    width: 100%;
-  }
-  
   .input {
     padding: 8px;
     border: 1px solid #ccc;
