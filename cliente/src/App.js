@@ -43,6 +43,12 @@ const App = () => {
     setShowRegister(false); // Volta para a tela de login
   };
 
+  // Função de callback chamada após o envio do formulário de viagem
+  const handleFormSubmit = () => {
+    // Pode ser usada para fazer algo após o envio (ex. redirecionar ou atualizar a lista de viagens)
+    setCurrentPage('home'); // Por exemplo, voltar para a página inicial após enviar a viagem
+  };
+
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Clone do BlaBlaCar</h1>
@@ -80,7 +86,7 @@ const App = () => {
 
       {/* Conteúdo Dinâmico com base no estado */}
       {currentPage === 'home' && isAuthenticated && <Home />}
-      {currentPage === 'rideForm' && isAuthenticated && <RideForm />}
+      {currentPage === 'rideForm' && isAuthenticated && <RideForm onFormSubmit={handleFormSubmit} />}
       {currentPage === 'profile' && isAuthenticated && <UserProfile onLogout={handleLogout} />}
     </div>
   );
