@@ -1,6 +1,6 @@
-// components/RideForm.js
 import React, { useState, useEffect } from 'react';
 import { createRide, getRideById, updateRide } from '../../services/api';
+import style from './RideForm.module.css';
 
 const RideForm = ({ rideId, onFormSubmit }) => {
   const [rideData, setRideData] = useState({
@@ -48,44 +48,47 @@ const RideForm = ({ rideId, onFormSubmit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        name="origin"
-        value={rideData.origin.toLowerCase()}
-        onChange={handleChange}
-        placeholder="Origem"
-        required
-      />
-      <input
-        name="destination"
-        value={rideData.destination.toLowerCase()}
-        onChange={handleChange}
-        placeholder="Destino"
-        required
-      />
-      <input
-        name="seats"
-        value={rideData.seats}
-        onChange={handleChange}
-        placeholder="Assentos"
-        required
-      />
-      <input
-        type="datetime-local"
-        name="date"
-        value={rideData.date}
-        onChange={handleChange}
-        required
-      />
-      <input
-        name="driver"
-        value={rideData.driver}
-        onChange={handleChange}
-        placeholder="Nome do Motorista"
-        required
-      />
-      <button type="submit">Salvar</button>
-    </form>
+    <div className={style.container}>
+        <h2>Oferecer uma Carona</h2>
+        <form className={style.form} onSubmit={handleSubmit}> 
+            <input className={style.input}
+                name="origin"
+                value={rideData.origin.toLowerCase()}
+                onChange={handleChange}
+                placeholder="Origem"
+                required
+            />
+            <input className={style.input}
+                name="destination"
+                value={rideData.destination.toLowerCase()}
+                onChange={handleChange}
+                placeholder="Destino"
+                required
+            />
+            <input className={style.input}
+                name="seats"
+                value={rideData.seats}
+                onChange={handleChange}
+                placeholder="Assentos"
+                required
+            />
+            <input className={style.input}
+                type="datetime-local"
+                name="date"
+                value={rideData.date}
+                onChange={handleChange}
+                required
+            />
+            <input className={style.input}
+                name="driver"
+                value={rideData.driver}
+                onChange={handleChange}
+                placeholder="Nome do Motorista"
+                required
+            />
+            <button type="submit" className={style.button}>Salvar</button>
+        </form>
+    </div>
   );
 };
 
