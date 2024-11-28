@@ -7,6 +7,8 @@ const Home = () => {
   const [destination, setDestination] = useState('');
   const [rides, setRides] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchMade, setSearchMade] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleSearch = async () => {
     if (!origin || !destination) {
@@ -15,15 +17,27 @@ const Home = () => {
     }
 
     setLoading(true);
+    setSearchMade(true);
+    setError(null);
+
     try {
-      const availableRides = await searchRides({ origin, destination });
-      setRides(availableRides);
+        const availableRides = await searchRides({ origin, destination });
+        setRides(availableRides);
     } catch (error) {
-      console.error('Erro ao buscar caronas:', error);
-      alert('Erro ao buscar caronas.');
+        console.error('Erro ao buscar caronas:', error);
+        alert('Erro ao buscar caronas.');
+        setRides([]);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
+  };
+
+  const handleClearSearch = () => {
+    setOrigin('');
+    setDestination('');
+    setRides([]);
+    setSearchMade(false);
+    setError(null); // Limpa o erro
   };
 
   return (
@@ -45,14 +59,26 @@ const Home = () => {
         {loading ? 'Carregando...' : 'Buscar'}
       </button>
 
-      <h3>Resultados:</h3>
-      <ul className={styles.list}>
-        {rides.map((ride) => (
-          <li className={styles.listItem} key={ride._id}>
-            {ride.origin} - {ride.destination} - {ride.date}
-          </li>
-        ))}
-      </ul>
+      <button className={styles.button} onClick={handleClearSearch}>
+        Limpar
+      </button>
+
+        {searchMade && rides.length > 0 && (
+            <div>
+                <h3>Resultados:</h3>
+                <ul className={styles.list}>
+                    {rides.map((ride) => (
+                    <li className={styles.listItem} key={ride._id}>
+                        {ride.origin} - {ride.destination} - {ride.date}
+                    </li>
+                    ))}
+                </ul>
+            </div>
+        )}
+
+        {searchMade && rides.length === 0 && !loading && !error &&(
+            <p className={styles.noResults}>Nenhuma carona encontrada.</p>
+        )}
     </div>
   );
 };
