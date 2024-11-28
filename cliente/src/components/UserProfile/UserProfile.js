@@ -1,6 +1,6 @@
-// components/UserProfile.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import styles from './UserProfile.module.css';
 
 const UserProfile = ({ onLogout }) => {
     const [userData, setUserData] = useState(null);
@@ -21,12 +21,12 @@ const UserProfile = ({ onLogout }) => {
     
 
     return (
-        <div>
-            <h2>Perfil do Usuário</h2>
+        <div className={styles.container}>
+            <h2 className={styles.title}>Perfil do Usuário</h2>
             {userData ? (
                 <>
-                    <p><strong>Nome:</strong> {userData.name}</p>
-                    <p><strong>Email:</strong> {userData.email}</p>
+                    <p className={styles.detail}><strong>Nome:</strong> {userData.name}</p>
+                    <p className={styles.detail}><strong>Email:</strong> {userData.email}</p>
                 </>
             ) : (
                 <p>Carregando...</p>
