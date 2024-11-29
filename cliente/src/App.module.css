@@ -1,9 +1,6 @@
 .container {
     width: 70%;
-    /* margin: 20px ; */
-    /* padding-bottom: 146px; */
     background: #fff;
-    /* border-radius: 8px; */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -22,7 +19,6 @@
 }
 
 .description {
-    /* margin: 20px ; */
     padding-bottom: 25px;
     height: 100%;
     width: 30%;
@@ -33,7 +29,6 @@
 .descriptionInner {
     width: 80%;
     margin: 0 auto;
-    /* background-color: #333; */
 }
 
 .descriptionInner p {
@@ -76,7 +71,6 @@
 .nav {
     width: 60%;
     text-align: center;
-    /* background-color: #fff; */
     padding: 10px;
 }
 
