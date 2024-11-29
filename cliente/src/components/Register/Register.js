@@ -29,7 +29,7 @@ const Register = ({ onBack }) => {
     return (
         <div className={styles.container}>
             <h2>Cadastro</h2>
-            <form
+            <form className={styles.form}
                 onSubmit={handleRegister}
                 autoComplete="off"
             >
@@ -66,6 +66,7 @@ const Register = ({ onBack }) => {
                 <button type="submit" className={styles.button}>Cadastrar</button>
             </form>
             <button className={styles.button} onClick={onBack}>Voltar ao Login</button>
+            <br></br>
         </div>
     );
 };
