@@ -25,7 +25,8 @@ const Login = ({ onLogin, onRegister }) => {
 
     return (
         <div className={styles.container}>
-            <form onSubmit={handleLogin}>
+            <h2>Faça Login</h2>
+            <form className={styles.form} onSubmit={handleLogin}>
                 <input className={styles.input}
                     type="email"
                     value={email}
@@ -41,6 +42,7 @@ const Login = ({ onLogin, onRegister }) => {
                 <button type="submit" className={styles.button}>Entrar</button>
             </form>
             <button className={styles.button} onClick={onRegister}>Criar Conta</button>
+            <br></br>
         </div>
     );
 };
