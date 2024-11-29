@@ -45,28 +45,46 @@ const App = () => {
 
     // Função de callback chamada após o envio do formulário de viagem
     const handleFormSubmit = () => {
-        // Pode ser usada para fazer algo após o envio (ex. redirecionar ou atualizar a lista de viagens)
-        setCurrentPage('home'); // Por exemplo, voltar para a página inicial após enviar a viagem
+        setCurrentPage('home'); // Voltar para a página inicial após enviar a viagem
     };
 
     return (
-        <div className={styles.container}>
-            <h1 className={styles.title}>Clone do BlaBlaCar</h1>
+        <><div>
+            <div>
+                <h1 className={styles.title}>Projeto de Mobilidade Urbana</h1>
+            </div>
 
-            {/* Menu de navegação */}
-            <nav className={styles.nav}>
-                <ul className={styles.navList}>
-                    {!isAuthenticated ? (
-                        <li className={styles.navItem}>
-                            {/* Exibe a tela de login ou registro, dependendo do estado */}
-                            {showRegister ? (
-                                <Register onBack={goToLogin} />
-                            ) : (
-                                <Login onLogin={handleLogin} onRegister={goToRegister} />
-                            )}
-                        </li>
-                    ) : (
-                        <>
+            {!isAuthenticated ? (
+                <div className={styles.flex}>
+                    <div className={styles.description}>
+                        <div className={styles.descriptionInner}>
+                            <p>
+                                Este site é uma plataforma de mobilidade urbana voltada para o transporte local de curta distância.
+                                Desenvolvido como projeto de TCC, o objetivo é oferecer uma alternativa acessível e eficiente
+                                para deslocamentos dentro do município.
+                            </p>
+                            <p>
+                                A plataforma é especialmente útil em áreas onde o transporte público é insuficiente e apps
+                                tradicionais, como Uber e 99, não estão disponíveis.
+                            </p>
+                            <p>
+                                O site conecta motoristas e passageiros, promovendo caronas seguras e organizadas, com foco em melhorar
+                                a mobilidade para o público de baixa renda.
+                            </p>
+                        </div>
+                    </div>
+                    <div className={styles.container}>
+                        {showRegister ? (
+                            <Register onBack={goToLogin} />
+                        ) : (
+                            <Login onLogin={handleLogin} onRegister={goToRegister} />
+                        )}
+                    </div>
+                </div>
+            ) : (
+                <>
+                    <nav className={styles.nav}>
+                        <ul className={styles.navList}>
                             <li className={styles.navItem}>
                                 <button className={styles.navButton} onClick={goToHome}>Página Inicial</button>
                             </li>
@@ -79,16 +97,21 @@ const App = () => {
                             <li className={styles.navItem}>
                                 <button className={styles.navButton} onClick={handleLogout}>Logout</button>
                             </li>
-                        </>
-                    )}
-                </ul>
-            </nav>
+                        </ul>
+                    </nav>
 
-            {/* Conteúdo Dinâmico com base no estado */}
-            {currentPage === 'home' && isAuthenticated && <Home />}
-            {currentPage === 'rideForm' && isAuthenticated && <RideForm onFormSubmit={handleFormSubmit} />}
-            {currentPage === 'profile' && isAuthenticated && <UserProfile onLogout={handleLogout} />}
-        </div>
+                    {/* Conteúdo Dinâmico com base no estado */}
+                    {currentPage === 'home' && <Home />}
+                    {currentPage === 'rideForm' && <RideForm onFormSubmit={handleFormSubmit} />}
+                    {currentPage === 'profile' && <UserProfile onLogout={handleLogout} />}
+                </>
+            )}
+        </div >
+            <div className={styles.footer}>
+                <p>&copy; 2024 Projeto de Mobilidade Urbana. Todos os direitos reservados.</p>
+                <p>Desenvolvido como parte do projeto de TCC de Ivan G. Silva.</p>
+            </div>
+        </>
     );
 };
 
