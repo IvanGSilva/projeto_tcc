@@ -1,16 +1,61 @@
-/* App.module.css */
 .container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
+    width: 70%;
+    /* margin: 20px ; */
+    /* padding-bottom: 146px; */
     background: #fff;
-    border-radius: 8px;
+    /* border-radius: 8px; */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .title {
-    text-align: center;
+    margin-top: 5px ;
+    margin-bottom: 5px ;
+    margin-left: 20px ;
+    margin-right: 20px ;
+    padding: 20px;
+    text-align: left;
     color: #333;
+}
+
+.description{
+    /* margin: 20px ; */
+    padding-bottom: 25px;
+    height: 100%;
+    width:30%;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.descriptionInner{
+    width: 80%;
+    margin: 0 auto;
+    /* background-color: #333; */
+}
+
+.descriptionInner p {
+    color: #333;
+    padding: 2px;
+    margin-bottom: 10px;
+    line-height: 1.6;
+    text-indent: 20px;
+  }
+
+  .auth{
+    margin: 0 auto;
+    width: 50%;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  .authInner{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+.flex{
+    width: 100%;
+    display: flex;
+    gap: 0px;
 }
 
 .nav {
@@ -41,4 +86,17 @@
 
 .navButton:hover {
     background-color: #ddd;
+}
+
+.footer {
+    background-color: #333;
+    color: #fff;
+    text-align: right;
+    padding: 2px 0;
+    width: 100%;
+    font-size: 10px;
+}
+
+.footer p{
+    margin-right: 10px;
 }
