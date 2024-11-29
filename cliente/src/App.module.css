@@ -7,26 +7,30 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.titleConteiner {
+    width: 40%;
+}
+
 .title {
-    margin-top: 5px ;
-    margin-bottom: 5px ;
-    margin-left: 20px ;
-    margin-right: 20px ;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+    margin-right: 20px;
     padding: 20px;
     text-align: left;
     color: #333;
 }
 
-.description{
+.description {
     /* margin: 20px ; */
     padding-bottom: 25px;
     height: 100%;
-    width:30%;
+    width: 30%;
     background: #fff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.descriptionInner{
+.descriptionInner {
     width: 80%;
     margin: 0 auto;
     /* background-color: #333; */
@@ -38,36 +42,48 @@
     margin-bottom: 10px;
     line-height: 1.6;
     text-indent: 20px;
-  }
+}
 
-  .auth{
+.auth {
     margin: 0 auto;
     width: 50%;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  .authInner{
+}
+
+.authInner {
     display: flex;
     flex-direction: column;
     gap: 10px;
-  }
+}
 
-.flex{
+.flex {
     width: 100%;
     display: flex;
     gap: 0px;
 }
 
+.loggedHeader {
+    display: flex;
+    background-color: #333;
+    color: #fff;
+}
+
+.loggedHeader h1 {
+    color: #fff;
+}
+
 .nav {
+    width: 60%;
     text-align: center;
-    background-color: #007bff;
+    /* background-color: #fff; */
     padding: 10px;
 }
 
 .navList {
     list-style: none;
     display: flex;
-    justify-content: center;
+    justify-content: end;
     padding: 0;
 }
 
@@ -77,15 +93,18 @@
 
 .navButton {
     padding: 10px 20px;
+    color: #333;
     background-color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: 16px;
+    transition: 0.5s;
 }
 
 .navButton:hover {
     background-color: #ddd;
+    transition: 0.5s;
 }
 
 .footer {
@@ -97,6 +116,6 @@
     font-size: 10px;
 }
 
-.footer p{
+.footer p {
     margin-right: 10px;
 }

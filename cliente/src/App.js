@@ -50,55 +50,60 @@ const App = () => {
 
     return (
         <><div>
-            <div>
-                <h1 className={styles.title}>Projeto de Mobilidade Urbana</h1>
-            </div>
-
             {!isAuthenticated ? (
-                <div className={styles.flex}>
-                    <div className={styles.description}>
-                        <div className={styles.descriptionInner}>
-                            <p>
-                                Este site é uma plataforma de mobilidade urbana voltada para o transporte local de curta distância.
-                                Desenvolvido como projeto de TCC, o objetivo é oferecer uma alternativa acessível e eficiente
-                                para deslocamentos dentro do município.
-                            </p>
-                            <p>
-                                A plataforma é especialmente útil em áreas onde o transporte público é insuficiente e apps
-                                tradicionais, como Uber e 99, não estão disponíveis.
-                            </p>
-                            <p>
-                                O site conecta motoristas e passageiros, promovendo caronas seguras e organizadas, com foco em melhorar
-                                a mobilidade para o público de baixa renda.
-                            </p>
+                <>
+                    <div className={styles.titleConteiner}>
+                        <h1 className={styles.title}>Projeto de Mobilidade Urbana</h1>
+                    </div>
+                    <div className={styles.flex}>
+                        <div className={styles.description}>
+                            <div className={styles.descriptionInner}>
+                                <p>
+                                    Este site é uma plataforma de mobilidade urbana voltada para o transporte local de curta distância.
+                                    Desenvolvido como projeto de TCC, o objetivo é oferecer uma alternativa acessível e eficiente
+                                    para deslocamentos dentro do município.
+                                </p>
+                                <p>
+                                    A plataforma é especialmente útil em áreas onde o transporte público é insuficiente e apps
+                                    tradicionais, como Uber e 99, não estão disponíveis.
+                                </p>
+                                <p>
+                                    O site conecta motoristas e passageiros, promovendo caronas seguras e organizadas, com foco em melhorar
+                                    a mobilidade para o público de baixa renda.
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    <div className={styles.container}>
-                        {showRegister ? (
-                            <Register onBack={goToLogin} />
-                        ) : (
-                            <Login onLogin={handleLogin} onRegister={goToRegister} />
-                        )}
-                    </div>
-                </div>
+                        <div className={styles.container}>
+                            {showRegister ? (
+                                <Register onBack={goToLogin} />
+                            ) : (
+                                <Login onLogin={handleLogin} onRegister={goToRegister} />
+                            )}
+                        </div>
+                    </div></>
             ) : (
                 <>
-                    <nav className={styles.nav}>
-                        <ul className={styles.navList}>
-                            <li className={styles.navItem}>
-                                <button className={styles.navButton} onClick={goToHome}>Página Inicial</button>
-                            </li>
-                            <li className={styles.navItem}>
-                                <button className={styles.navButton} onClick={goToRideForm}>Ofereça uma carona</button>
-                            </li>
-                            <li className={styles.navItem}>
-                                <button className={styles.navButton} onClick={goToProfile}>Perfil</button>
-                            </li>
-                            <li className={styles.navItem}>
-                                <button className={styles.navButton} onClick={handleLogout}>Logout</button>
-                            </li>
-                        </ul>
-                    </nav>
+                    <div className={styles.loggedHeader}>
+                        <div className={styles.titleConteiner}>
+                            <h1 className={styles.title}>Projeto de Mobilidade Urbana</h1>
+                        </div>
+                        <nav className={styles.nav}>
+                            <ul className={styles.navList}>
+                                <li className={styles.navItem}>
+                                    <button className={styles.navButton} onClick={goToHome}>Página Inicial</button>
+                                </li>
+                                <li className={styles.navItem}>
+                                    <button className={styles.navButton} onClick={goToRideForm}>Ofereça uma carona</button>
+                                </li>
+                                <li className={styles.navItem}>
+                                    <button className={styles.navButton} onClick={goToProfile}>Perfil</button>
+                                </li>
+                                <li className={styles.navItem}>
+                                    <button className={styles.navButton} onClick={handleLogout}>Logout</button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
 
                     {/* Conteúdo Dinâmico com base no estado */}
                     {currentPage === 'home' && <Home />}
