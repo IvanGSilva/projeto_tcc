@@ -16,7 +16,7 @@ export const searchRides = async (filters) => {
     } catch (error) {
         throw error.response.data;
     }
-};  
+};
 
 // Função para criar uma nova carona
 export const createRide = async (rideData) => {

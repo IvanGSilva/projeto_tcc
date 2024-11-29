@@ -14,11 +14,11 @@ const UserProfile = ({ onLogout }) => {
                 console.error('Erro ao obter perfil:', error);
             }
         };
-        
+
         fetchUserData(); // Chama a função para buscar os dados do usuário ao montar o componente
     }, []);
 
-    
+
 
     return (
         <div className={styles.container}>

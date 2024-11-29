@@ -42,21 +42,21 @@ router.post('/login', async (req, res) => {
 router.get('/profile', (req, res) => {
     console.log('Sessão atual:', req.session); // Exibe a sessão inteira
     if (!req.session.userId) {
-      console.log('Usuário não autenticado - sessão não contém userId');
-      return res.status(401).json({ error: 'Usuário não autenticado' });
+        console.log('Usuário não autenticado - sessão não contém userId');
+        return res.status(401).json({ error: 'Usuário não autenticado' });
     }
-  
+
     User.findById(req.session.userId)
-      .then(user => {
-        if (!user) {
-          return res.status(404).json({ error: 'Usuário não encontrado' });
-        }
-        console.log('Usuário autenticado, dados do perfil retornados:', user); // Exibe os dados do usuário se autenticado
-        res.json({ name: user.username, email: user.email });
-      })
-      .catch(err => res.status(500).json({ error: 'Erro ao obter perfil' }));
-  });
-  
+        .then(user => {
+            if (!user) {
+                return res.status(404).json({ error: 'Usuário não encontrado' });
+            }
+            console.log('Usuário autenticado, dados do perfil retornados:', user); // Exibe os dados do usuário se autenticado
+            res.json({ name: user.username, email: user.email });
+        })
+        .catch(err => res.status(500).json({ error: 'Erro ao obter perfil' }));
+});
+
 
 // Endpoint para logout
 router.post('/logout', (req, res) => {
