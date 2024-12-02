@@ -37,7 +37,6 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
                     origin: data.origin,
                     destination: data.destination,
                     date: data.date,
-                    price: data.price,
                     seats: data.seats,
                     driverId: data.driverId
                 });
