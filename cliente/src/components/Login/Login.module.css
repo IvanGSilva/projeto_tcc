@@ -12,6 +12,7 @@
 
 .input {
     padding: 10px;
+    width: 80%;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
@@ -19,8 +20,9 @@
 .form {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 10px;
-    width: 400px;
+    width: 80%;
 }
 
 .button {
