@@ -41,45 +41,65 @@ const Home = () => {
     };
 
     return (
-        <div className={styles.container}>
-            <h2 className={styles.title}>Encontre Caronas</h2>
-            <input className={styles.input}
-                type="text"
-                placeholder="Onde você está agora?"
-                value={origin}
-                onChange={(e) => setOrigin(e.target.value)}
-            />
-            <input className={styles.input}
-                type="text"
-                placeholder="Para onde você vai?"
-                value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-            />
-            <button className={styles.button} onClick={handleSearch} disabled={loading}>
-                {loading ? 'Carregando...' : 'Buscar'}
-            </button>
+        <>
+            <div className={styles.content}>
+                <div className={styles.container}>
+                    <div className={styles.rideSearchForm}>
+                        <h2 className={styles.title}>
+                            Encontre Caronas
+                        </h2>
+                        <div className={styles.inputDiv}>
+                            <i class="fa-solid fa-map-location-dot"></i>
+                            <input className={styles.input}
+                                type="text"
+                                placeholder="Onde você está agora?"
+                                value={origin}
+                                onChange={(e) => setOrigin(e.target.value)} />
+                        </div>
 
-            <button className={styles.button} onClick={handleClearSearch}>
-                Limpar
-            </button>
+                        <div className={styles.inputDiv}>
+                            <i class="fa-solid fa-route"></i>
+                            <input className={styles.input}
+                                type="text"
+                                placeholder="Para onde você vai?"
+                                value={destination}
+                                onChange={(e) => setDestination(e.target.value)} />
+                        </div>
 
-            {searchMade && rides.length > 0 && (
-                <div>
-                    <h3>Resultados:</h3>
-                    <ul className={styles.list}>
-                        {rides.map((ride) => (
-                            <li className={styles.listItem} key={ride._id}>
-                                {ride.origin} - {ride.destination} - {ride.date}
-                            </li>
-                        ))}
-                    </ul>
+                        <div className={styles.buttonDiv}>
+                            <button className={styles.button} onClick={handleSearch} disabled={loading}>
+                                {loading ? 'Carregando...' : 'Buscar'}
+                            </button>
+
+                            <button className={styles.button} onClick={handleClearSearch}>
+                                Limpar
+                            </button>
+                        </div>
+                    </div>
+
+                    {searchMade && rides.length > 0 && (
+                        <div>
+                            <h3>Resultados:</h3>
+                            <ul className={styles.list}>
+                                {rides.map((ride) => (
+                                    <li className={styles.listItem} key={ride._id}>
+                                        {ride.origin} - {ride.destination} - {ride.date}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
+                    {searchMade && rides.length === 0 && !loading && !error && (
+                        <p className={styles.noResults}>Nenhuma carona encontrada.</p>
+                    )}
                 </div>
-            )}
 
-            {searchMade && rides.length === 0 && !loading && !error && (
-                <p className={styles.noResults}>Nenhuma carona encontrada.</p>
-            )}
-        </div>
+                <div className={styles.map}>
+                    {/* mapa placeholder */}
+                </div>
+            </div>
+        </>
     );
 };
 
