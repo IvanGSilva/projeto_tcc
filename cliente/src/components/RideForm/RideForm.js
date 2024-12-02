@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import styles from './RideForm.module.css'
+import styles from './RideForm.module.css';
 
-const RideForm = ({ rideId, onFormSubmit }) => {
+const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
     const [rideData, setRideData] = useState({
         origin: '',
         destination: '',
         date: '',
-        price: '',
-        seats: ''
+        seats: '',
+        driverId: loggedUserId // Define o motorista como o usuário logado
     });
 
-    // Efeito para carregar dados da viagem quando estiver editando uma viagem existente
+    // Carrega dados da viagem se for uma edição
     useEffect(() => {
         if (rideId) {
             fetchRideData(rideId);
@@ -21,16 +21,25 @@ const RideForm = ({ rideId, onFormSubmit }) => {
         try {
             const response = await fetch(`http://localhost:5000/api/rides/${id}`, {
                 method: 'GET',
-                credentials: 'include', // Certifique-se de enviar cookies de sessão
+                credentials: 'include',
             });
+
             if (response.ok) {
                 const data = await response.json();
+
+                // Verifica se a viagem pertence ao motorista logado
+                if (data.driverId !== loggedUserId) {
+                    alert('Você não tem permissão para editar esta viagem.');
+                    return;
+                }
+
                 setRideData({
                     origin: data.origin,
                     destination: data.destination,
                     date: data.date,
                     price: data.price,
-                    seats: data.seats
+                    seats: data.seats,
+                    driverId: data.driverId
                 });
             } else {
                 alert('Erro ao carregar dados da viagem');
@@ -56,7 +65,7 @@ const RideForm = ({ rideId, onFormSubmit }) => {
                 ? `http://localhost:5000/api/rides/${rideId}`  // Atualiza a viagem
                 : 'http://localhost:5000/api/rides';           // Cria uma nova viagem
 
-            const method = rideId ? 'PUT' : 'POST';  // Define o método HTTP (POST para criar, PUT para atualizar)
+            const method = rideId ? 'PUT' : 'POST';
 
             const response = await fetch(url, {
                 method,
@@ -64,12 +73,12 @@ const RideForm = ({ rideId, onFormSubmit }) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(rideData),
-                credentials: 'include', // Importante para enviar os cookies de sessão
+                credentials: 'include',
             });
 
             if (response.ok) {
-                onFormSubmit(); // Chama a função de retorno após o envio
-                alert('Viagem registrada com sucesso!');
+                onFormSubmit();
+                alert(rideId ? 'Viagem atualizada com sucesso!' : 'Viagem registrada com sucesso!');
             } else {
                 const errorData = await response.json();
                 alert(`Erro ao salvar a viagem: ${errorData.error || 'Erro desconhecido'}`);
@@ -84,8 +93,8 @@ const RideForm = ({ rideId, onFormSubmit }) => {
         <div className={styles.container}>
             <h2>{rideId ? 'Editar Viagem' : 'Cadastrar Viagem'}</h2>
             <form className={styles.form} onSubmit={handleSubmit}>
-
-                <input className={styles.input}
+                <input
+                    className={styles.input}
                     type="text"
                     name="origin"
                     placeholder="Local de Origem"
@@ -93,8 +102,8 @@ const RideForm = ({ rideId, onFormSubmit }) => {
                     onChange={handleChange}
                     required
                 />
-
-                <input className={styles.input}
+                <input
+                    className={styles.input}
                     type="text"
                     name="destination"
                     placeholder="Local de Chegada"
@@ -102,8 +111,8 @@ const RideForm = ({ rideId, onFormSubmit }) => {
                     onChange={handleChange}
                     required
                 />
-
-                <input className={styles.input}
+                <input
+                    className={styles.input}
                     type="date"
                     name="date"
                     placeholder="Data da Viagem"
@@ -111,18 +120,12 @@ const RideForm = ({ rideId, onFormSubmit }) => {
                     onChange={handleChange}
                     required
                 />
-
-                <input className={styles.input}
+                <input
+                    className={styles.input}
                     name="seats"
                     placeholder="Assentos"
+                    type="number"
                     value={rideData.seats}
-                    onChange={handleChange}
-                    required
-                />
-                <input className={styles.input}
-                    name="driver"
-                    placeholder="Nome do Motorista"
-                    value={rideData.driver}
                     onChange={handleChange}
                     required
                 />
