@@ -1,0 +1,12 @@
+.container{
+    width: 100%;
+    min-height: 452px;
+    display: flex;
+    flex-direction: row;
+}
+.formColumn{
+    width: 50%;
+}
+.listColumn{
+    width: 50%;
+}
