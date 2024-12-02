@@ -1,11 +1,11 @@
 .container {
-    width: 70%;
+    width: 60%;
     background: #fff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .titleConteiner {
-    width: 40%;
+    width: 60%;
 }
 
 .title {
