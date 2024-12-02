@@ -1,16 +1,16 @@
-// components/RideList.js
 import React from 'react';
+import styles from './RideList.module.css';
 
 const RideList = ({ rides, onEdit, onDelete }) => {
     return (
-        <div>
-            <h2>Caronas</h2>
-            <ul>
+        <div className={styles.listDiv}>
+            <h2>Suas Caronas Oferecidas</h2>
+            <ul className={styles.list}>
                 {rides.map(ride => (
-                    <li key={ride._id}>
+                    <li key={ride._id} className={styles.item}>
                         {ride.origin} - {ride.destination} - {ride.date}
-                        <button onClick={() => onEdit(ride._id)}>Editar</button>
-                        <button onClick={() => onDelete(ride._id)}>Deletar</button>
+                        <button className={styles.button} onClick={() => onEdit(ride._id)}>Editar</button>
+                        <button className={styles.button} onClick={() => onDelete(ride._id)}>Deletar</button>
                     </li>
                 ))}
             </ul>
