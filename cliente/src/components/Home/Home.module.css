@@ -75,6 +75,10 @@
     border-bottom: none;
 }
 
+ul {
+    list-style-type: none;
+}
+
 .button {
     margin-top: 10px;
     padding: 10px 20px;
