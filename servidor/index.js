@@ -12,6 +12,8 @@ const PORT = process.env.PORT || 5000;
 
 const userRoutes = require('./routes/users');
 const rideRoutes = require('./routes/rides');
+const fipeRoutes = require('./routes/fipe');
+const vehicleRoutes = require('./routes/vehicle');
 
 // Middlewares
 app.use(session({
@@ -26,13 +28,14 @@ app.use(session({
     }
 }));
 
-
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(express.json());
 
 // Rotas
 app.use('/api/users', userRoutes);
 app.use('/api/rides', rideRoutes);
+app.use('/api/fipe', fipeRoutes);
+app.use('/api/vehicles', vehicleRoutes);
 
 // Conectar ao MongoDB e iniciar o servidor
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
