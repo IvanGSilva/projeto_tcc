@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './UserProfile.module.css';
+import RegisterVehicle from '../RegisterVehicle/RegisterVehicle';
 
 const UserProfile = ({ onLogout }) => {
     const [userData, setUserData] = useState(null);
@@ -18,8 +19,6 @@ const UserProfile = ({ onLogout }) => {
         fetchUserData(); // Chama a função para buscar os dados do usuário ao montar o componente
     }, []);
 
-
-
     return (
         <div className={styles.container}>
             <h2 className={styles.title}>Perfil do Usuário</h2>
@@ -27,6 +26,7 @@ const UserProfile = ({ onLogout }) => {
                 <>
                     <p className={styles.detail}><strong>Nome:</strong> {userData.name}</p>
                     <p className={styles.detail}><strong>Email:</strong> {userData.email}</p>
+                    <RegisterVehicle />
                 </>
             ) : (
                 <p>Carregando...</p>
