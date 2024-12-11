@@ -5,7 +5,8 @@ import axios from 'axios';
 const API_URL = 'http://localhost:5000/api/rides';
 
 const api = axios.create({
-    baseURL: 'http://localhost:5000/api', // URL do seu servidor Express
+    // URL do servidor Express
+    baseURL: 'http://localhost:5000/api', 
     withCredentials: true,
 });
 
@@ -64,12 +65,16 @@ export const deleteRide = async (id) => {
     await axios.delete(`${API_URL}/${id}`);
 };
 
-// Exportar todas as funções juntas
-export default {
+const apiServices = {
     api,
     createRide,
     getRideById,
     updateRide,
     getRides,
     deleteRide,
+}
+
+// Exportar todas as funções juntas
+export default {
+    apiServices
 };
