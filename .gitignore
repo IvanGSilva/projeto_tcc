@@ -6,3 +6,7 @@
 #packages
 package-lock.json
 package.json
+
+# Ignorar imagens nas pastas servidor/uploads/original e servidor/uploads/webp
+servidor/uploads/original/*
+servidor/uploads/webp/*
