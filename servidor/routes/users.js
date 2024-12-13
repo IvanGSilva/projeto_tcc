@@ -1,15 +1,63 @@
 const express = require('express');
-const User = require('../models/User');
+const multer = require('multer');
+const path = require('path'); 
+const sharp = require('sharp');
+const fs = require('fs');
 const bcrypt = require('bcrypt');
+const User = require('../models/User');
 const { isAgeValid, isCPFValid, isCNHValid } = require('../utils/validators');
 const router = express.Router();
 
+// Configuração do multer para armazenar a foto
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        // Diretório onde as fotos serão armazenadas
+        cb(null, 'uploads/original');
+    },
+    filename: (req, file, cb) => {
+        // Renomeia o arquivo com o timestamp e extensão correta
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+// 'profilePicture' é o campo de arquivo enviado
+const upload = multer({ storage: storage }).single('profilePicture'); 
+
+
+// Função para converter e salvar a foto no formato .webp
+const convertToWebP = (filePath) => {
+    const outputFilePath = `uploads/webp/${path.basename(filePath, path.extname(filePath))}.webp`;
+    return sharp(filePath)
+        .webp({ quality: 70 })
+        .toFile(outputFilePath)
+        .then(() => outputFilePath)
+        .catch(err => {
+            throw new Error('Erro ao converter imagem para .webp');
+        });
+};
+
+// Função para excluir o arquivo original
+const deleteOriginalImage = (filePath) => {
+    fs.unlink(filePath, (err) => {
+        if (err) {
+            console.error('Erro ao excluir imagem original:', err);
+        } else {
+            console.log('Imagem original excluída com sucesso');
+        }
+    });
+};
+
 // Endpoint para criar um novo usuário
-router.post('/register', async (req, res) => {
+router.post('/register', upload, async (req, res) => {
     const { username, email, password, dateOfBirth, cpf, phone, gender, cnh } = req.body;
+    // Caminho completo da imagem original
+    const originalImagePath = req.file ? path.join('uploads/original', req.file.filename) : null;
+    // Variável para armazenar o nome da imagem convertida
+    let profilePicture = null; 
 
     // Verificando o que está sendo enviado no corpo da requisição
     console.log('Dados recebidos no servidor:', req.body);
+    console.log('Foto recebida:', req.file);
 
     try {
         // Validando CPF
@@ -30,6 +78,14 @@ router.post('/register', async (req, res) => {
         // Criptografando a senha
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Se houver foto, convertê-la para .webp
+        if (originalImagePath) {
+            // Converte a imagem para .webp
+            profilePicture = await convertToWebP(originalImagePath); 
+            // Exclui a imagem original
+            deleteOriginalImage(originalImagePath); 
+        }
+
         // Criando o usuário
         const user = new User({
             username,
@@ -39,7 +95,10 @@ router.post('/register', async (req, res) => {
             cpf,
             phone,
             gender,
-            cnh,  // CNH será enviado apenas se presente
+            // CNH será enviado apenas se presente
+            cnh,  
+            // Salva o nome da foto convertida
+            profilePicture,
         });
 
         await user.save();
@@ -50,7 +109,6 @@ router.post('/register', async (req, res) => {
         res.status(400).json({ error: 'Erro ao cadastrar usuário: ' + error.message });
     }
 });
-
 
 // Endpoint para login
 router.post('/login', async (req, res) => {
@@ -101,27 +159,5 @@ router.post('/logout', (req, res) => {
         res.status(200).json({ message: 'Logout realizado com sucesso!' });
     });
 });
-
-function isValidCPF(cpf) {
-    cpf = cpf.replace(/[^\d]+/g, ''); // Remove caracteres não numéricos
-    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
-
-    let sum = 0;
-    let remainder;
-
-    for (let i = 1; i <= 9; i++) sum += parseInt(cpf.substring(i - 1, i)) * (11 - i);
-    remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(cpf.substring(9, 10))) return false;
-
-    sum = 0;
-    for (let i = 1; i <= 10; i++) sum += parseInt(cpf.substring(i - 1, i)) * (12 - i);
-    remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(cpf.substring(10, 11))) return false;
-
-    return true;
-}
-
 
 module.exports = router;
