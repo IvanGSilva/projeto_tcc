@@ -130,23 +130,41 @@ router.post('/login', async (req, res) => {
 
 
 // Rota para obter o perfil do usuário
-router.get('/profile', (req, res) => {
+router.get('/profile', async (req, res) => {
     console.log('Sessão atual:', req.session); // Exibe a sessão inteira
     if (!req.session.userId) {
         console.log('Usuário não autenticado - sessão não contém userId');
         return res.status(401).json({ error: 'Usuário não autenticado' });
     }
 
-    User.findById(req.session.userId)
-        .then(user => {
-            if (!user) {
-                return res.status(404).json({ error: 'Usuário não encontrado' });
-            }
-            console.log('Usuário autenticado, dados do perfil retornados:', user); // Exibe os dados do usuário se autenticado
-            res.json({ name: user.username, email: user.email });
-        })
-        .catch(err => res.status(500).json({ error: 'Erro ao obter perfil' }));
+    try {
+        const user = await User.findById(req.session.userId);
+        if (!user) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+
+        // Gera o nome correto do arquivo .webp
+        const profilePictureWebP = user.profilePicture
+            ? `${path.basename(user.profilePicture, path.extname(user.profilePicture))}.webp`
+            : null;
+
+        console.log('Usuário autenticado, dados do perfil retornados:', user);
+        res.json({
+            username: user.username,
+            email: user.email,
+            cpf: user.cpf,
+            phone: user.phone,
+            gender: user.gender,
+            dateOfBirth: user.dateOfBirth,
+            cnh: user.cnh,
+            profilePicture: profilePictureWebP, // Retorna o nome correto do arquivo convertido
+        });
+    } catch (err) {
+        console.error('Erro ao obter perfil:', err);
+        res.status(500).json({ error: 'Erro ao obter perfil' });
+    }
 });
+
 
 
 // Endpoint para logout
