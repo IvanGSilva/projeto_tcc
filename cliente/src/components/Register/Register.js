@@ -10,23 +10,29 @@ const Register = ({ onBack }) => {
     const [phone, setPhone] = useState('');
     const [gender, setGender] = useState('');
     const [cnh, setCnh] = useState(''); // Novo campo CNH
+    const [profilePicture, setProfilePicture] = useState(null); // Foto de perfil
+    const [isLoading, setIsLoading] = useState(false); // Indicador de carregamento
 
     const handleRegister = async (e) => {
         e.preventDefault();
+        const formData = new FormData();
+        formData.append('username', username);
+        formData.append('email', email);
+        formData.append('password', password);
+        formData.append('dateOfBirth', dateOfBirth);
+        formData.append('cpf', cpf);
+        formData.append('phone', phone);
+        formData.append('gender', gender);
+        formData.append('cnh', cnh || ''); // CNH opcional
+        if (profilePicture) {
+            formData.append('profilePicture', profilePicture); // Foto de perfil opcional
+        }
+
+        setIsLoading(true);
         try {
             const response = await fetch('http://localhost:5000/api/users/register', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username,
-                    email,
-                    password,
-                    dateOfBirth,
-                    cpf,
-                    phone,
-                    gender,
-                    cnh: cnh || undefined, // CNH é opcional, se não for preenchido, envia undefined
-                }),
+                body: formData,
             });
 
             if (response.ok) {
@@ -38,6 +44,18 @@ const Register = ({ onBack }) => {
             }
         } catch (error) {
             console.error('Erro ao cadastrar:', error);
+            alert('Erro ao realizar o cadastro');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            setProfilePicture(file);
+        } else {
+            alert('Por favor, envie uma imagem válida.');
         }
     };
 
@@ -110,9 +128,9 @@ const Register = ({ onBack }) => {
                     required
                 >
                     <option value="">Selecione o Sexo</option>
-                    <option value="male">Masculino</option>
-                    <option value="female">Feminino</option>
-                    <option value="other">Outro</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Feminino</option>
+                    <option value="O">Outro</option>
                 </select>
                 <input
                     className={styles.input}
@@ -122,9 +140,20 @@ const Register = ({ onBack }) => {
                     value={cnh}
                     onChange={(e) => setCnh(e.target.value)}
                 />
-                <button type="submit" className={styles.button}>Cadastrar</button>
+                <input
+                    className={styles.input}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    placeholder="Foto de Perfil (Opcional)"
+                />
+                <button type="submit" className={styles.button} disabled={isLoading}>
+                    {isLoading ? 'Cadastrando...' : 'Cadastrar'}
+                </button>
             </form>
-            <button className={styles.buttonSubmit} onClick={onBack}>Voltar ao Login</button>
+            <button className={styles.buttonSubmit} onClick={onBack}>
+                Voltar ao Login
+            </button>
         </div>
     );
 };
