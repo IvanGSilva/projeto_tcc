@@ -4,6 +4,10 @@ const MongoStore = require('connect-mongo');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const multer = require('multer');
+const sharp = require('sharp');
+const path = require('path');
+const fs = require('fs');
 
 dotenv.config(); // Carregar variáveis de ambiente primeiro
 
@@ -15,7 +19,25 @@ const rideRoutes = require('./routes/rides');
 const fipeRoutes = require('./routes/fipe');
 const vehicleRoutes = require('./routes/vehicle');
 
-// Middlewares
+// Configuração do Multer para armazenar as imagens temporariamente
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadDir = path.join(__dirname, 'uploads', 'profile_pictures');
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+        const fileExtension = path.extname(file.originalname);
+        const fileName = Date.now() + fileExtension;
+        cb(null, fileName);
+    }
+});
+
+const upload = multer({ storage });
+
+// Middleware de sessão
 app.use(session({
     secret: 'senhaCookies',
     resave: false,
@@ -28,6 +50,7 @@ app.use(session({
     }
 }));
 
+// Middlewares
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(express.json());
 
@@ -36,6 +59,31 @@ app.use('/api/users', userRoutes);
 app.use('/api/rides', rideRoutes);
 app.use('/api/fipe', fipeRoutes);
 app.use('/api/vehicles', vehicleRoutes);
+
+// Rota para upload de foto de perfil
+app.post('/api/users/uploadProfilePicture', upload.single('profilePicture'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'Nenhuma imagem enviada' });
+        }
+
+        const filePath = path.join(__dirname, 'uploads', 'profile_pictures', req.file.filename);
+        const webpPath = filePath.replace(path.extname(req.file.filename), '.webp');
+
+        // Convertendo a imagem para .webp
+        await sharp(filePath)
+            .webp({ quality: 80 }) // Ajuste a qualidade conforme necessário
+            .toFile(webpPath);
+
+        // Remover o arquivo original
+        fs.unlinkSync(filePath);
+
+        res.status(200).json({ message: 'Imagem carregada e convertida com sucesso', filePath: webpPath });
+    } catch (error) {
+        console.error('Erro ao processar a imagem:', error);
+        res.status(500).json({ error: 'Erro ao processar a imagem' });
+    }
+});
 
 // Conectar ao MongoDB e iniciar o servidor
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
