@@ -9,6 +9,7 @@
 }
 
 .title {
+    width: 100%;
     margin-top: 5px;
     margin-bottom: 5px;
     margin-left: 20px;
@@ -19,7 +20,8 @@
 }
 
 .description {
-    padding-bottom: 25px;
+    margin-left: 3%;
+    padding-bottom: 5%;
     height: 100%;
     width: 30%;
     background: #fff;
