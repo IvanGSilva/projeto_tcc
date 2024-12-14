@@ -110,6 +110,68 @@ router.post('/register', upload, async (req, res) => {
     }
 });
 
+// Endpoint para editar o usuário logado
+router.put('/profile', upload, async (req, res) => {
+    const userId = req.session.userId;
+
+    if (!userId) {
+        return res.status(401).json({ error: 'Usuário não autenticado' });
+    }
+
+    const { username, email, dateOfBirth, cpf, phone, gender, cnh } = req.body;
+    const originalImagePath = req.file ? path.join('uploads/original', req.file.filename) : null;
+    let profilePicture = null;
+
+    try {
+        // Validando CPF, se fornecido
+        if (cpf && !isCPFValid(cpf)) {
+            return res.status(400).json({ error: 'CPF inválido' });
+        }
+
+        // Validando CNH, se fornecido
+        if (cnh && !isCNHValid(cnh)) {
+            return res.status(400).json({ error: 'CNH inválido' });
+        }
+
+        // Validando idade, se fornecida
+        if (dateOfBirth && !isAgeValid(dateOfBirth)) {
+            return res.status(400).json({ error: 'Usuário deve ser maior de idade' });
+        }
+
+        // Se houver uma nova foto, converte para .webp
+        if (originalImagePath) {
+            profilePicture = await convertToWebP(originalImagePath);
+            deleteOriginalImage(originalImagePath);
+        }
+
+        // Atualiza os dados do usuário no banco de dados
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            {
+                ...(username && { username }),
+                ...(email && { email }),
+                ...(dateOfBirth && { dateOfBirth }),
+                ...(cpf && { cpf }),
+                ...(phone && { phone }),
+                ...(gender && { gender }),
+                ...(cnh && { cnh }),
+                ...(profilePicture && { profilePicture }),
+            },
+            { new: true } // Retorna o documento atualizado
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+
+        res.status(200).json({ message: 'Perfil atualizado com sucesso!', user: updatedUser });
+    } catch (error) {
+        console.error('Erro ao atualizar perfil:', error);
+        res.status(500).json({ error: 'Erro ao atualizar perfil: ' + error.message });
+    }
+});
+
+
 // Endpoint para login
 router.post('/login', async (req, res) => {
     try {
