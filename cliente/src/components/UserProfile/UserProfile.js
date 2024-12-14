@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './UserProfile.module.css';
 import RegisterVehicle from '../RegisterVehicle/RegisterVehicle';
+import EditProfile from '../EditProfile/EditProfile';
 
 // Função para formatar a data de nascimento
 const formatDate = (isoDate) => {
@@ -24,19 +25,35 @@ const formatPhone = (phone) => {
 
 const UserProfile = ({ onLogout }) => {
     const [userData, setUserData] = useState(null);
+    const [isEditing, setIsEditing] = useState(false); // Controla o estado da página (edição ou visualização)
+
+    const fetchUserData = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/users/profile', { withCredentials: true });
+            setUserData(response.data);
+        } catch (error) {
+            console.error('Erro ao obter perfil:', error);
+        }
+    };
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/api/users/profile', { withCredentials: true });
-                setUserData(response.data);
-            } catch (error) {
-                console.error('Erro ao obter perfil:', error);
-            }
-        };
-
         fetchUserData(); // Chama a função para buscar os dados do usuário ao montar o componente
     }, []);
+
+    // Alterna para o estado de edição
+    const handleEditClick = () => {
+        setIsEditing(true);
+    };
+
+    // Volta para o estado de visualização após salvar ou cancelar
+    const handleProfileUpdated = () => {
+        setIsEditing(false);
+        fetchUserData(); // Atualiza os dados após a edição
+    };
+
+    if (isEditing) {
+        return <EditProfile onBack={handleProfileUpdated} />;
+    }
 
     return (
         <div className={styles.container}>
@@ -76,6 +93,9 @@ const UserProfile = ({ onLogout }) => {
                 ) : (
                     <p>Carregando...</p>
                 )}
+                <button className={styles.button} onClick={handleEditClick}>
+                    Editar Perfil
+                </button>
             </div>
 
             <div className={styles.vehicleSection}>
