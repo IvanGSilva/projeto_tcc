@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './UserProfile.module.css';
 import EditProfile from '../EditProfile/EditProfile';
-import RegisterVehicle from '../RegisterVehicle/RegisterVehicle';
-import ListVehicle from '../ListVehicle/ListVehicle';
+import RegisterVehicle from '../../Vehicle/RegisterVehicle/RegisterVehicle';
+import ListVehicle from '../../Vehicle/ListVehicle/ListVehicle';
 
 // Função para formatar a data de nascimento
 const formatDate = (isoDate) => {
