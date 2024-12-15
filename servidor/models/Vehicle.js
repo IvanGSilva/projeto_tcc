@@ -5,6 +5,7 @@ const vehicleSchema = new mongoose.Schema({
   brand: { type: String, required: true },
   model: { type: String, required: true },
   year: { type: String, required: true },
+  color: {type: String, required: true},
   plate: { type: String, required: true, unique: true }
 }, { timestamps: true });
 
