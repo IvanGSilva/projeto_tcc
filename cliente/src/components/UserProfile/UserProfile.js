@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './UserProfile.module.css';
-import RegisterVehicle from '../RegisterVehicle/RegisterVehicle';
 import EditProfile from '../EditProfile/EditProfile';
+import RegisterVehicle from '../RegisterVehicle/RegisterVehicle';
+import ListVehicle from '../ListVehicle/ListVehicle';
 
 // Função para formatar a data de nascimento
 const formatDate = (isoDate) => {
@@ -111,12 +112,14 @@ const UserProfile = ({ onLogout }) => {
             </div>
 
             <div className={styles.vehicleSection}>
-                <h2 className={styles.title}>Seus Veículos</h2>
                 {userData?.cnh ? (
                     <>
+                        <div>
+                            <ListVehicle />
+                        </div>
                         {!showVehicleForm ? (
                             <button className={styles.button} onClick={toggleVehicleForm}>
-                                Cadastrar um Veículo
+                                Cadastrar Veículo
                             </button>
                         ) : (
                             <>
