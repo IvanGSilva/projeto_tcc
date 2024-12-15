@@ -25,7 +25,8 @@ const formatPhone = (phone) => {
 
 const UserProfile = ({ onLogout }) => {
     const [userData, setUserData] = useState(null);
-    const [isEditing, setIsEditing] = useState(false); // Controla o estado da página (edição ou visualização)
+    const [isEditing, setIsEditing] = useState(false);
+    const [showVehicleForm, setShowVehicleForm] = useState(false);
 
     const fetchUserData = async () => {
         try {
@@ -37,18 +38,29 @@ const UserProfile = ({ onLogout }) => {
     };
 
     useEffect(() => {
-        fetchUserData(); // Chama a função para buscar os dados do usuário ao montar o componente
+        fetchUserData();
     }, []);
 
-    // Alterna para o estado de edição
     const handleEditClick = () => {
         setIsEditing(true);
     };
 
-    // Volta para o estado de visualização após salvar ou cancelar
     const handleProfileUpdated = () => {
         setIsEditing(false);
-        fetchUserData(); // Atualiza os dados após a edição
+        fetchUserData();
+    };
+
+    const toggleVehicleForm = () => {
+        setShowVehicleForm((prev) => !prev);
+    };
+
+    const getGenderLabel = (gender) => {
+        const genderMap = {
+            M: 'Masculino',
+            F: 'Feminino',
+            O: 'Outro',
+        };
+        return genderMap[gender] || 'Não especificado';
     };
 
     if (isEditing) {
@@ -78,7 +90,7 @@ const UserProfile = ({ onLogout }) => {
                                     <strong>Data de Nascimento:</strong> {formatDate(userData.dateOfBirth)}
                                 </p>
                                 <p className={styles.detail}><strong>CPF:</strong> {userData.cpf}</p>
-                                <p className={styles.detail}><strong>Gênero:</strong> {userData.gender}</p>
+                                <p className={styles.detail}><strong>Gênero:</strong> {getGenderLabel(userData.gender)}</p>
                                 {userData.cnh && <p className={styles.detail}><strong>CNH:</strong> {userData.cnh}</p>}
                             </div>
                             <div className={styles.detailBox}>
@@ -99,9 +111,22 @@ const UserProfile = ({ onLogout }) => {
             </div>
 
             <div className={styles.vehicleSection}>
-                <h2 className={styles.title}>Cadastro de Veículos</h2>
+                <h2 className={styles.title}>Seus Veículos</h2>
                 {userData?.cnh ? (
-                    <RegisterVehicle />
+                    <>
+                        {!showVehicleForm ? (
+                            <button className={styles.button} onClick={toggleVehicleForm}>
+                                Cadastrar um Veículo
+                            </button>
+                        ) : (
+                            <>
+                                <RegisterVehicle onClose={toggleVehicleForm} />
+                                <button className={styles.button} onClick={toggleVehicleForm}>
+                                    Cancelar
+                                </button>
+                            </>
+                        )}
+                    </>
                 ) : (
                     <p className={styles.warning}>
                         Você precisa cadastrar sua CNH para adicionar veículos.
