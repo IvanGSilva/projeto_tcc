@@ -55,6 +55,12 @@ const UserProfile = ({ onLogout }) => {
         setShowVehicleForm((prev) => !prev);
     };
 
+    const handleSave = () => {
+        // Lógica para atualizar a lista de veículos ou fazer qualquer outra coisa necessária após salvar o veículo.
+        console.log('Veículo salvo!');
+        // Exemplo: você pode adicionar lógica aqui para atualizar a lista de veículos ou outras ações.
+    };
+
     const getGenderLabel = (gender) => {
         const genderMap = {
             M: 'Masculino',
@@ -123,7 +129,10 @@ const UserProfile = ({ onLogout }) => {
                             </button>
                         ) : (
                             <>
-                                <RegisterVehicle onClose={toggleVehicleForm} />
+                                <RegisterVehicle
+                                    onClose={toggleVehicleForm}
+                                    onSave={handleSave}  // Passando a função handleSave aqui
+                                />
                                 <button className={styles.button} onClick={toggleVehicleForm}>
                                     Cancelar
                                 </button>
