@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Login from './components/Login/Login';
-import Register from './components/Register/Register';
-import UserProfile from './components/UserProfile/UserProfile';
-import RideManager from './components/RideManager/RideManager'; // Importando o novo RideManager
+import Login from './components/User/Login/Login';
+import Register from './components/User/Register/Register';
+import UserProfile from './components/User/UserProfile/UserProfile';
+import RideManager from './components/Ride/RideManager/RideManager';
 import Home from './components/Home/Home'; // Componente da página inicial com pesquisa
 import styles from './App.module.css';
 
