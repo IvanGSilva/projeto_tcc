@@ -162,7 +162,7 @@ const EditProfile = ({ onBack }) => {
                     {isLoading ? 'Atualizando...' : 'Atualizar'}
                 </button>
             </form>
-            <button className={styles.buttonSubmit} onClick={onBack}>
+            <button className={styles.button} onClick={onBack}>
                 Voltar
             </button>
         </div>
