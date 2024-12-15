@@ -10,6 +10,7 @@ const RegisterVehicle = ({ userId }) => {
     const [modelSelecionado, setModelSelecionado] = useState(null);
     const [year, setYear] = useState('');
     const [plate, setPlate] = useState('');
+    const [color, setColor] = useState('');
     const [isLoadingModels, setIsLoadingModels] = useState(false);
 
     // Fetch brands from the backend
@@ -55,6 +56,7 @@ const RegisterVehicle = ({ userId }) => {
             brand: brandSelecionada.label,
             model: modelSelecionado.label,
             year,
+            color,
             plate
         };
 
@@ -65,6 +67,7 @@ const RegisterVehicle = ({ userId }) => {
             setModelSelecionado(null);
             setYear('');
             setPlate('');
+            setColor('');
         } catch (error) {
             console.error('Erro ao cadastrar veículo:', error);
             alert('Erro ao cadastrar veículo: ' + error.message);
@@ -80,7 +83,7 @@ const RegisterVehicle = ({ userId }) => {
                     options={brands}
                     onChange={handleBrandChange}
                     value={brandSelecionada}
-                    placeholder="Selecione a brand"
+                    placeholder="Selecione a marca"
                     name="brand"
                 />
                 <Select
@@ -89,7 +92,7 @@ const RegisterVehicle = ({ userId }) => {
                     onChange={setModelSelecionado}
                     value={modelSelecionado}
                     isDisabled={!brandSelecionada || isLoadingModels}
-                    placeholder={isLoadingModels ? 'Carregando models...' : 'Selecione o model'}
+                    placeholder={isLoadingModels ? 'Carregando modelos...' : 'Selecione o modelo'}
                     name="model"
                 />
                 <input
@@ -97,7 +100,7 @@ const RegisterVehicle = ({ userId }) => {
                     type="text"
                     value={year}
                     onChange={(e) => setYear(e.target.value)}
-                    placeholder="Digite o year"
+                    placeholder="Digite o ano"
                     name="year"
                 />
                 <input
@@ -107,6 +110,14 @@ const RegisterVehicle = ({ userId }) => {
                     onChange={(e) => setPlate(e.target.value)}
                     placeholder="Digite a plate (ex: ABC-1234)"
                     name="plate"
+                />
+                <input
+                    className={styles.input}
+                    type="text"
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                    placeholder="Digite a cor do veículo"
+                    name="color"
                 />
                 <button type="submit" className={styles.button}>
                     Cadastrar Veículo
