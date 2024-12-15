@@ -45,7 +45,7 @@ router.put('/:id', isAuthenticated, async (req, res) => {
         const userId = req.session.userId;
 
         // Verifica se o veículo pertence ao usuário logado
-        const vehicle = await Vehicle.findOne({ _id: id, userId });
+        const vehicle = await Vehicle.findOne({ _id: id, userId: userId });
         if (!vehicle) {
             return res.status(404).json({ error: 'Veículo não encontrado ou você não tem permissão para editá-lo.' });
         }
