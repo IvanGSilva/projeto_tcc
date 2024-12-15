@@ -31,7 +31,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 // Rota para listar veículos de um usuário
 router.get('/', async (req, res) => {
     try {
-        const vehicles = await Vehicle.find({ userId: req.user._id });
+        const vehicles = await Vehicle.find({ userId: req.session.userId });
         res.status(200).json(vehicles);
     } catch (err) {
         res.status(400).json({ error: err.message });
