@@ -3,17 +3,17 @@ import axios from 'axios';
 import Select from 'react-select';
 import styles from './RegisterVehicle.module.css';
 
-const RegisterVehicle = ({ userId }) => {
+const RegisterVehicle = ({ userId, vehicleData = null, onClose, onSave }) => {
     const [brands, setBrands] = useState([]);
     const [models, setModels] = useState([]);
-    const [brandSelecionada, setBrandSelecionada] = useState(null);
-    const [modelSelecionado, setModelSelecionado] = useState(null);
-    const [year, setYear] = useState('');
-    const [plate, setPlate] = useState('');
-    const [color, setColor] = useState('');
+    const [brandSelecionada, setBrandSelecionada] = useState(vehicleData ? { label: vehicleData.brand, value: vehicleData.brand } : null);
+    const [modelSelecionado, setModelSelecionado] = useState(vehicleData ? { label: vehicleData.model, value: vehicleData.model } : null);
+    const [year, setYear] = useState(vehicleData?.year || '');
+    const [plate, setPlate] = useState(vehicleData?.plate || '');
+    const [color, setColor] = useState(vehicleData?.color || '');
     const [isLoadingModels, setIsLoadingModels] = useState(false);
 
-    // Fetch brands from the backend
+    // Busca as marcas da API da fipe
     useEffect(() => {
         const fetchBrands = async () => {
             try {
@@ -26,7 +26,7 @@ const RegisterVehicle = ({ userId }) => {
         fetchBrands();
     }, []);
 
-    // Handle brand selection and fetch models
+    // Busca os modelos da marca selecionada
     const handleBrandChange = async (selectedOption) => {
         setBrandSelecionada(selectedOption);
         setModelSelecionado(null);
@@ -35,14 +35,14 @@ const RegisterVehicle = ({ userId }) => {
 
         try {
             const response = await axios.get(`http://localhost:5000/api/fipe/brand/${selectedOption.value}/models`);
-            setModels(response.data.map((models) => ({ value: models.codigo, label: models.nome })));
+            setModels(response.data.map((model) => ({ value: model.codigo, label: model.nome })));
         } catch (error) {
             console.error('Erro ao buscar modelos:', error);
         } finally {
             setIsLoadingModels(false);
         }
     };
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -61,23 +61,27 @@ const RegisterVehicle = ({ userId }) => {
         };
 
         try {
-            await axios.post('http://localhost:5000/api/vehicles', vehicle, { withCredentials: true });
-            alert('Veículo cadastrado com sucesso!');
-            setBrandSelecionada(null);
-            setModelSelecionado(null);
-            setYear('');
-            setPlate('');
-            setColor('');
+            if (vehicleData) {
+                // Editar um veiculo
+                await axios.put(`http://localhost:5000/api/vehicles/${vehicleData._id}`, vehicle, { withCredentials: true });
+                alert('Veículo atualizado com sucesso!');
+            } else {
+                // Criar um novo veiculo
+                await axios.post('http://localhost:5000/api/vehicles', vehicle, { withCredentials: true });
+                alert('Veículo cadastrado com sucesso!');
+            }
+            onSave();
+            onClose();
         } catch (error) {
-            console.error('Erro ao cadastrar veículo:', error);
-            alert('Erro ao cadastrar veículo: ' + error.message);
+            console.error('Erro ao salvar veículo:', error);
+            alert('Erro ao salvar veículo: ' + error.message);
         }
     };
 
     return (
         <div className={styles.container}>
             <form className={styles.form} onSubmit={handleSubmit}>
-                <h3>Cadastro de Veículo</h3>
+                <h3>{vehicleData ? 'Editar Veículo' : 'Cadastrar Veículo'}</h3>
                 <Select
                     className={styles.input}
                     options={brands}
@@ -108,7 +112,7 @@ const RegisterVehicle = ({ userId }) => {
                     type="text"
                     value={plate}
                     onChange={(e) => setPlate(e.target.value)}
-                    placeholder="Digite a plate (ex: ABC-1234)"
+                    placeholder="Digite a placa (ex: ABC-1234)"
                     name="plate"
                 />
                 <input
@@ -119,9 +123,14 @@ const RegisterVehicle = ({ userId }) => {
                     placeholder="Digite a cor do veículo"
                     name="color"
                 />
-                <button type="submit" className={styles.button}>
-                    Cadastrar Veículo
-                </button>
+                <div className={styles.actions}>
+                    <button type="submit" className={styles.button}>
+                        {vehicleData ? 'Salvar Alterações' : 'Cadastrar Veículo'}
+                    </button>
+                    <button type="button" className={styles.button} onClick={onClose}>
+                        Cancelar
+                    </button>
+                </div>
             </form>
         </div>
     );
