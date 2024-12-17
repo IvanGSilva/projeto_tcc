@@ -5,7 +5,14 @@ const rideSchema = new mongoose.Schema({
     origin: { type: String, required: true },
     destination: { type: String, required: true },
     date: { type: Date, required: true },
+    time: { type: String, required: true },
     seats: { type: Number, required: true },
+    passengers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    status: { 
+        type: String, 
+        enum: ['not_started', 'in_progress', 'completed'],
+        default: 'not_started'
+    }
 });
 
 const Ride = mongoose.model('Ride', rideSchema);
