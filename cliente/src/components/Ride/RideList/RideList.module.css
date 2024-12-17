@@ -35,9 +35,12 @@
 .rideData{
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
 }
 
 .passengers {
+    padding: 10px;
+    width: 60%;
     text-align: center;
 }
 
