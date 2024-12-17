@@ -42,4 +42,47 @@ function isCNHValid(cnh) {
     return /^[0-9]{11}$/.test(cnh);
 }
 
-module.exports = { isAgeValid, isCPFValid, isCNHValid };
+// Valida a data e hora da viagem
+function isRideDateTimeValid(date, time) {
+    const rideDateTime = new Date(`${date}T${time}`); // Data e hora da viagem
+    const now = new Date(); // Data e hora atuais
+
+    // Valida se a data/hora informada é válida
+    if (isNaN(rideDateTime.getTime())) {
+        return { valid: false, error: 'Data ou hora inválida.' };
+    }
+
+    // Se a data da viagem for no passado
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Define "hoje" às 00:00:00
+    if (rideDateTime < today) {
+        return { valid: false, error: 'A viagem não pode estar no passado.' };
+    }
+
+    // Verifica se a viagem é hoje
+    if (rideDateTime.toDateString() === now.toDateString()) {
+        const thirtyMinutesLater = new Date(now.getTime() + 30 * 60000); // 30 minutos a partir de agora
+
+        if (rideDateTime < thirtyMinutesLater) {
+            return { valid: false, error: 'A viagem deve iniciar no mínimo 30 minutos após o horário atual.' };
+        }
+    }
+
+    return { valid: true }; // Validação bem-sucedida
+}
+
+// Valida a quantidade de assentos
+function isSeatsValid(seats) {
+    if (seats < 1 || seats == 0) {
+        return { valid: false, error: 'O número de assentos deve ser pelo menos 1.' };
+    }
+    return { valid: true };
+}
+
+module.exports = {
+    isAgeValid,
+    isCPFValid,
+    isCNHValid,
+    isRideDateTimeValid,
+    isSeatsValid
+};
