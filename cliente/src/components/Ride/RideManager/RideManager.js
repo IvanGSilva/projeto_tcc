@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import RideForm from '../RideForm/RideForm';
 import RideList from '../RideList/RideList';
+import RideHistory from '../RideHistory/RideHistory';
 import styles from './RideManager.module.css';
 
 const RideManager = ({ loggedUserId }) => {
     const [rides, setRides] = useState([]);
     const [selectedRideId, setSelectedRideId] = useState(null);
+    // Estado para controlar a exibição do histórico
+    const [showHistory, setShowHistory] = useState(false);
 
     // Buscar viagens do servidor
     const fetchRides = async () => {
         try {
             const response = await fetch('http://localhost:5000/api/rides', {
                 method: 'GET',
-                credentials: 'include', // Inclui cookies de sessão
+                credentials: 'include',
             });
 
             if (response.ok) {
@@ -30,8 +33,7 @@ const RideManager = ({ loggedUserId }) => {
     // Atualiza o estado de viagens após salvar ou excluir uma viagem
     const handleFormSubmit = () => {
         fetchRides();
-        // Limpa a seleção após o envio do formulário
-        setSelectedRideId(null); 
+        setSelectedRideId(null); // Limpa a seleção após o envio do formulário
     };
 
     const handleEdit = (rideId) => {
@@ -72,7 +74,7 @@ const RideManager = ({ loggedUserId }) => {
             if (response.ok) {
                 alert('Carona finalizada com sucesso!');
                 // Atualiza a lista de viagens
-                fetchRides(); 
+                fetchRides();
             } else {
                 alert('Erro ao finalizar a carona');
             }
@@ -93,12 +95,22 @@ const RideManager = ({ loggedUserId }) => {
             </div>
 
             <div className={styles.listColumn}>
-                <RideList 
-                    rides={rides} 
-                    onEdit={handleEdit} 
-                    onDelete={handleDelete} 
-                    onComplete={handleComplete}
-                />
+                <div className={styles.historyToggle}>
+                    <button onClick={() => setShowHistory(!showHistory)} className={styles.button}>
+                        {showHistory ? 'Voltar' : <><i class="fa-solid fa-clock"></i> Histórico de Viagens</>}
+                    </button>
+                </div>
+
+                {showHistory ? (
+                    <RideHistory rides={rides.filter(ride => ride.status === 'completed')} />
+                ) : (
+                    <RideList
+                        rides={rides}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                        onComplete={handleComplete}
+                    />
+                )}
             </div>
         </div>
     );
