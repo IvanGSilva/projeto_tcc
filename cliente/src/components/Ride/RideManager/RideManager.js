@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import RideForm from '../RideForm/RideForm';
 import RideList from '../RideList/RideList';
-import styles from './RideManager.module.css'; // Adicione um arquivo CSS para os estilos
+import styles from './RideManager.module.css';
 
 const RideManager = ({ loggedUserId }) => {
     const [rides, setRides] = useState([]);
@@ -30,7 +30,8 @@ const RideManager = ({ loggedUserId }) => {
     // Atualiza o estado de viagens após salvar ou excluir uma viagem
     const handleFormSubmit = () => {
         fetchRides();
-        setSelectedRideId(null); // Limpa a seleção após o envio do formulário
+        // Limpa a seleção após o envio do formulário
+        setSelectedRideId(null); 
     };
 
     const handleEdit = (rideId) => {
@@ -41,7 +42,7 @@ const RideManager = ({ loggedUserId }) => {
         try {
             const response = await fetch(`http://localhost:5000/api/rides/${rideId}`, {
                 method: 'DELETE',
-                credentials: 'include', // Inclui cookies de sessão
+                credentials: 'include',
             });
 
             if (response.ok) {
@@ -56,20 +57,48 @@ const RideManager = ({ loggedUserId }) => {
         }
     };
 
+    // Função para finalizar a carona
+    const handleComplete = async (rideId) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/rides/${rideId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: 'completed' }),
+                credentials: 'include',
+            });
+
+            if (response.ok) {
+                alert('Carona finalizada com sucesso!');
+                // Atualiza a lista de viagens
+                fetchRides(); 
+            } else {
+                alert('Erro ao finalizar a carona');
+            }
+        } catch (error) {
+            console.error('Erro ao finalizar a carona:', error);
+            alert('Erro ao finalizar a carona');
+        }
+    };
+
     useEffect(() => {
         fetchRides();
     }, []);
 
     return (
         <div className={styles.container}>
-            {/* Coluna para o formulário de carona */}
             <div className={styles.formColumn}>
                 <RideForm rideId={selectedRideId} onFormSubmit={handleFormSubmit} loggedUserId={loggedUserId} />
             </div>
 
-            {/* Coluna para a lista de caronas */}
             <div className={styles.listColumn}>
-                <RideList rides={rides} onEdit={handleEdit} onDelete={handleDelete} />
+                <RideList 
+                    rides={rides} 
+                    onEdit={handleEdit} 
+                    onDelete={handleDelete} 
+                    onComplete={handleComplete}
+                />
             </div>
         </div>
     );
