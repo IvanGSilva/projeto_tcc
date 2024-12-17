@@ -6,8 +6,10 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
         origin: '',
         destination: '',
         date: '',
+        time: '',
         seats: '',
-        driverId: loggedUserId // Define o motorista como o usuário logado
+        status: 'not_started', // Status padrão
+        driverId: loggedUserId, // Define o motorista como o usuário logado
     });
 
     // Carrega dados da viagem se for uma edição
@@ -28,7 +30,7 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
                 const data = await response.json();
 
                 // Verifica se a viagem pertence ao motorista logado
-                if (data.driverId !== loggedUserId) {
+                if (data.driver === loggedUserId) {
                     alert('Você não tem permissão para editar esta viagem.');
                     return;
                 }
@@ -36,9 +38,11 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
                 setRideData({
                     origin: data.origin,
                     destination: data.destination,
-                    date: data.date,
+                    date: data.date.split('T')[0], // Ajuste para o formato de input date
+                    time: data.time,
                     seats: data.seats,
-                    driverId: data.driverId
+                    status: data.status,
+                    driverId: data.driver
                 });
             } else {
                 alert('Erro ao carregar dados da viagem');
@@ -78,6 +82,15 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
             if (response.ok) {
                 onFormSubmit();
                 alert(rideId ? 'Viagem atualizada com sucesso!' : 'Viagem registrada com sucesso!');
+                setRideData({
+                    origin: '',
+                    destination: '',
+                    date: '',
+                    time: '',
+                    seats: '',
+                    status: 'not_started',
+                    driverId: loggedUserId,
+                });
             } else {
                 const errorData = await response.json();
                 alert(`Erro ao salvar a viagem: ${errorData.error || 'Erro desconhecido'}`);
@@ -121,6 +134,15 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
                 />
                 <input
                     className={styles.input}
+                    type="time"
+                    name="time"
+                    placeholder="Horário da Viagem"
+                    value={rideData.time}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    className={styles.input}
                     name="seats"
                     placeholder="Assentos"
                     type="number"
@@ -128,6 +150,16 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
                     onChange={handleChange}
                     required
                 />
+                <select
+                    className={styles.select}
+                    name="status"
+                    value={rideData.status}
+                    onChange={handleChange}
+                    required
+                >
+                    <option value="not_started">Não Iniciada</option>
+                    <option value="in_progress">Em Andamento</option>
+                </select>
 
                 <button type="submit" className={styles.button}>
                     {rideId ? 'Atualizar Viagem' : 'Cadastrar Viagem'}
