@@ -29,7 +29,18 @@
 .item {
     padding: 10px;
     border-bottom: 1px solid #eee;
+    width: 100%;
 }
+
+.rideData{
+    display: flex;
+    flex-direction: row;
+}
+
+.passengers {
+    text-align: center;
+}
+
 .button {
     margin: 10px;
     padding: 10px 20px;
