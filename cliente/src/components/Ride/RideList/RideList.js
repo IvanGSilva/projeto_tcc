@@ -14,7 +14,7 @@ const formatDate = (isoDate) => {
     return `${day}/${month}/${year}`;
 };
 
-const RideList = ({ rides, onEdit, onDelete }) => {
+const RideList = ({ rides, onEdit, onDelete, onComplete }) => {
     // Função para formatar o horário no formato HH:mm
     const formatTime = (time) => {
         return time ? time.substring(0, 5) : '--:--';
@@ -34,14 +34,17 @@ const RideList = ({ rides, onEdit, onDelete }) => {
         }
     };
 
+    // Filtra as viagens para mostrar apenas aquelas que não estão finalizadas
+    const filteredRides = rides.filter(ride => ride.status !== 'completed');
+
     return (
         <div className={styles.listDiv}>
             <h2>Suas Caronas Oferecidas</h2>
-            {rides.length === 0 ? (
-                <p>Você ainda não registrou nenhuma carona.</p>
+            {filteredRides.length === 0 ? (
+                <p>Você ainda não registrou nenhuma carona não finalizada.</p>
             ) : (
                 <ul className={styles.list}>
-                    {rides.map(ride => (
+                    {filteredRides.map(ride => (
                         <li key={ride._id} className={styles.item}>
                             <div className={styles.rideData}>
                                 <div>
@@ -78,6 +81,14 @@ const RideList = ({ rides, onEdit, onDelete }) => {
                                 >
                                     Deletar
                                 </button>
+                                {ride.status !== 'completed' && (
+                                    <button
+                                        className={styles.button}
+                                        onClick={() => onComplete(ride._id)}
+                                    >
+                                        Finalizar Carona
+                                    </button>
+                                )}
                             </div>
                         </li>
                     ))}
