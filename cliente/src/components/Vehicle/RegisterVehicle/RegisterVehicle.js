@@ -83,7 +83,7 @@ const RegisterVehicle = ({ userId, vehicleData = null, onClose, onSave }) => {
             <form className={styles.form} onSubmit={handleSubmit}>
                 <h3>{vehicleData ? 'Editar Veículo' : 'Cadastrar Veículo'}</h3>
                 <Select
-                    className={styles.input}
+                    className={styles.select}
                     options={brands}
                     onChange={handleBrandChange}
                     value={brandSelecionada}
@@ -91,7 +91,7 @@ const RegisterVehicle = ({ userId, vehicleData = null, onClose, onSave }) => {
                     name="brand"
                 />
                 <Select
-                    className={styles.input}
+                    className={styles.select}
                     options={models}
                     onChange={setModelSelecionado}
                     value={modelSelecionado}
