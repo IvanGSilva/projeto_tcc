@@ -58,8 +58,7 @@
 }
 
 .list {
-    width: 100%;
-    max-width: 600px;
+    min-width: 500px !important;
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 5px;

@@ -81,14 +81,29 @@ const Home = () => {
                         <div>
                             <h3>Resultados:</h3>
                             <ul className={styles.list}>
-                                {rides.map((ride) => (
-                                    <li className={styles.listItem} key={ride._id}>
-                                        {ride.origin} - {ride.destination} - {ride.date}
-                                    </li>
-                                ))}
+                                {rides.map((ride) => {
+                                    const rideDate = new Date(ride.date);
+                                    const formattedDate = rideDate.toLocaleString('pt-BR', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: false
+                                    });
+
+                                    return (
+                                        <li className={styles.listItem} key={ride._id}>
+                                            <div><strong>Origem:</strong> {ride.origin}</div>
+                                            <div><strong>Destino:</strong> {ride.destination}</div>
+                                            <div><strong>Data:</strong> {formattedDate}</div>
+                                            <div><strong>Assentos:</strong> {ride.seats}</div>
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         </div>
                     )}
+
 
                     {searchMade && rides.length === 0 && !loading && !error && (
                         <p className={styles.noResults}>Nenhuma carona encontrada.</p>
