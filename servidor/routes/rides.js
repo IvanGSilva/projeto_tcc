@@ -67,7 +67,8 @@ router.get('/', isAuthenticated, async (req, res) => {
 });
 
 // Endpoint para buscar caronas com filtros de origem, destino, data e status
-router.get('/search', async (req, res) => {
+router.get('/search', isAuthenticated, async (req, res) => {
+    console.log(req.session.userId);
     const { origin, destination, date, status } = req.query;
 
     try {
@@ -76,7 +77,10 @@ router.get('/search', async (req, res) => {
         if (destination) query.destination = destination;
         if (date) query.date = { $gte: new Date(date) };
         if (status) query.status = status;
-
+        if(req.session.userId) {
+            query.driver = { $ne: req.session.userId };
+        }
+        
         const rides = await Ride.find(query);
         res.status(200).json(rides);
     } catch (error) {
