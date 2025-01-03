@@ -1,4 +1,3 @@
-// src/services/api.js
 import axios from 'axios';
 
 // URL da API
@@ -13,7 +12,13 @@ const api = axios.create({
 // Função para buscar as caronas por origem e destino
 export const searchRides = async (filters) => {
     try {
-        const response = await axios.get(`${API_URL}/search`, { params: filters });
+        // Filtro para excluir caronas com status "completed"
+        const updatedFilters = { 
+            ...filters, 
+            status: { $ne: 'completed' }
+        };
+
+        const response = await axios.get(`${API_URL}/search`, { withCredentials: true, params: updatedFilters });
         return response.data;
     } catch (error) {
         if (error.response) {
@@ -34,7 +39,6 @@ export const searchRides = async (filters) => {
         }
     }
 };
-
 
 // Função para criar uma nova carona
 export const createRide = async (rideData) => {
