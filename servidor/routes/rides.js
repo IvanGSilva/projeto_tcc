@@ -1,5 +1,6 @@
 const express = require('express');
 const Ride = require('../models/Ride');
+const Vehicle = require('../models/Vehicle');
 const { isRideDateTimeValid, isSeatsValid } = require('../utils/validators');
 const router = express.Router();
 
@@ -14,7 +15,7 @@ const isAuthenticated = (req, res, next) => {
 // Endpoint para criar uma nova viagem
 router.post('/', isAuthenticated, async (req, res) => {
     try {
-        const { origin, destination, date, time, seats } = req.body;
+        const { origin, destination, date, time, seats, vehicleId } = req.body;
 
         // Validação básica dos novos campos
         if (!origin || !destination || !date || !time || !seats) {
@@ -36,8 +37,44 @@ router.post('/', isAuthenticated, async (req, res) => {
             return res.status(400).send({ error: seatsError });
         }
 
+        // Buscar os veículos do motorista logado
+        const vehicles = await Vehicle.find({ userId: req.session.userId });
+
+        // Caso o motorista tenha apenas um veículo, associamos automaticamente à viagem
+        if (vehicles.length === 1) {
+            // Associar o único veículo automaticamente à viagem
+            const rideData = {
+                driver: req.session.userId,
+                vehicle: vehicles[0]._id, // Veículo automaticamente associado
+                origin,
+                destination,
+                date: new Date(date),
+                time,
+                seats,
+                passengers: [], // Inicialmente sem passageiros
+                status: 'not_started', // Status padrão
+            };
+            const ride = new Ride(rideData);
+            await ride.save();
+            return res.status(201).json(ride);
+        }
+
+        // Caso o motorista tenha mais de um veículo, precisamos que ele escolha um
+        if (vehicles.length > 1 && !vehicleId) {
+            return res.status(400).send({ error: 'Escolha um veículo para a viagem' });
+        }
+
+        // Se o veículo foi escolhido ou o motorista tem apenas um veículo
+        const selectedVehicle = vehicles.find(vehicle => vehicle._id.toString() === vehicleId);
+
+        if (!selectedVehicle) {
+            return res.status(400).send({ error: 'Veículo inválido' });
+        }
+
+        // Criar a viagem com o veículo selecionado
         const rideData = {
             driver: req.session.userId,
+            vehicle: selectedVehicle._id, // Veículo escolhido
             origin,
             destination,
             date: new Date(date),
@@ -50,7 +87,7 @@ router.post('/', isAuthenticated, async (req, res) => {
         const ride = new Ride(rideData);
         await ride.save();
 
-        res.status(201).send(ride);
+        res.status(201).json(ride);
     } catch (error) {
         res.status(400).send({ error: error.message });
     }
@@ -67,8 +104,7 @@ router.get('/', isAuthenticated, async (req, res) => {
 });
 
 // Endpoint para buscar caronas com filtros de origem, destino, data e status
-router.get('/search', isAuthenticated, async (req, res) => {
-    console.log(req.session.userId);
+router.get('/search', async (req, res) => {
     const { origin, destination, date, status } = req.query;
 
     try {
@@ -77,16 +113,21 @@ router.get('/search', isAuthenticated, async (req, res) => {
         if (destination) query.destination = destination;
         if (date) query.date = { $gte: new Date(date) };
         if (status) query.status = status;
-        if(req.session.userId) {
-            query.driver = { $ne: req.session.userId };
+        if (req.session.userId) {
+            query.driver = { $ne: req.session.userId }; // Excluir viagens do motorista logado
         }
-        
-        const rides = await Ride.find(query);
+
+        // Buscar viagens com o motorista populado
+        const rides = await Ride.find(query)
+            .populate('driver', 'username profilePicture')
+            .populate('vehicle', 'model color plate');
+
         res.status(200).json(rides);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
+
 
 // Endpoint para obter uma viagem pelo ID
 router.get('/:id', async (req, res) => {
