@@ -12,7 +12,8 @@ const rideSchema = new mongoose.Schema({
         type: String, 
         enum: ['not_started', 'in_progress', 'completed'],
         default: 'not_started'
-    }
+    },
+    vehicle: { type: mongoose.Schema.Types.ObjectId, ref: 'Vehicle', required: true },
 });
 
 const Ride = mongoose.model('Ride', rideSchema);
