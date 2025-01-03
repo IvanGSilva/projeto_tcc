@@ -88,13 +88,13 @@ const App = () => {
                         <nav className={styles.nav}>
                             <ul className={styles.navList}>
                                 <li className={styles.navItem}>
-                                    <button className={styles.navButton} onClick={goToHome}>Página Inicial</button>
+                                    <button className={styles.navButton} onClick={goToHome}>Início</button>
                                 </li>
                                 <li className={styles.navItem}>
-                                    <button className={styles.navButton} onClick={goToRideManager}>Ofereça ou Edite uma Carona</button>
+                                    <button className={styles.navButton} onClick={goToRideManager}>Minhas Caronas</button>
                                 </li>
                                 <li className={styles.navItem}>
-                                    <button className={styles.navButton} onClick={goToProfile}>Seu Perfil</button>
+                                    <button className={styles.navButton} onClick={goToProfile}>Meu Perfil</button>
                                 </li>
                                 <li className={styles.navItem}>
                                     <button className={styles.navButton} onClick={handleLogout}>Logout</button>
