@@ -58,16 +58,22 @@
 }
 
 .list {
-    min-width: 500px !important;
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+ul{
+    padding-inline-start: 5px;
+}
+
 .listItem {
     padding: 10px;
     border-bottom: 1px solid #eee;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .listItem:last-child {
@@ -94,4 +100,29 @@ ul {
     background-color: #333;
     color: #fff;
     transition: 0.5s;
+}
+
+.ride_data{
+    display: flex;
+    flex-direction: column;
+    min-width: 50%;
+}
+
+.ride_data:first-child{
+    padding-top: 13%;
+}
+
+.driver_and_vahicle{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.imageContainer {
+    text-align: center;
+}
+
+.profileImage {
+    max-width: 50px;
+    border-radius: 100%;
 }

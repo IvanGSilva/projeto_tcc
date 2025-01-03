@@ -93,17 +93,42 @@ const Home = () => {
 
                                     return (
                                         <li className={styles.listItem} key={ride._id}>
-                                            <div><strong>Origem:</strong> {ride.origin}</div>
-                                            <div><strong>Destino:</strong> {ride.destination}</div>
-                                            <div><strong>Data:</strong> {formattedDate}</div>
-                                            <div><strong>Assentos:</strong> {ride.seats}</div>
+                                            <div className={styles.ride_data}>
+                                                <div><strong>Origem:</strong> {ride.origin}</div>
+                                                <div><strong>Destino:</strong> {ride.destination}</div>
+                                                <div><strong>Data:</strong> {formattedDate}</div>
+                                                <div><strong>Assentos:</strong> {ride.seats}</div>
+                                            </div>
+
+                                            <div className={styles.driver_and_vahicle}>
+                                                {ride.driver && (
+                                                    <>
+                                                        <div className={styles.imageContainer}>
+                                                            {ride.driver.profilePicture && (
+                                                                <img
+                                                                    className={styles.profileImage}
+                                                                    src={`http://localhost:5000/${ride.driver.profilePicture}`}
+                                                                    alt={`Foto de perfil de ${ride.driver.username}`} />
+                                                            )}
+                                                        </div>
+                                                        <div><strong>Condutor:</strong> {ride.driver.username}</div>
+                                                    </>
+                                                )}
+                                                {ride.vehicle && (
+                                                    <div>
+                                                        <strong>Veículo:</strong>
+                                                        <div><strong>Modelo: </strong>{ride.vehicle.model}</div>
+                                                        <div><strong>Cor: </strong>{ride.vehicle.color}</div>
+                                                        <div><strong>Placa: </strong>{ride.vehicle.plate}</div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </li>
                                     );
                                 })}
                             </ul>
                         </div>
                     )}
-
 
                     {searchMade && rides.length === 0 && !loading && !error && (
                         <p className={styles.noResults}>Nenhuma carona encontrada.</p>
