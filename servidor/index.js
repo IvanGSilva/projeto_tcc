@@ -50,6 +50,7 @@ app.use(session({
         secure: false, // Definir como true em produção (com HTTPS)
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24, // Expira em 1 dia
+        sameSite: 'None',
     }
 }));
 
