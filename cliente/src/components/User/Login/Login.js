@@ -15,7 +15,8 @@ const Login = ({ onLogin, onRegister }) => {
                 { withCredentials: true }
             );
             if (response.status === 200) {
-                onLogin(true); // Login bem-sucedido
+                console.log('Login realizado com sucesso!');
+                onLogin(true, response.data.userId); 
             }
         } catch (error) {
             console.error('Erro ao fazer login:', error);
