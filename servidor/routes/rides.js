@@ -190,9 +190,8 @@ router.put('/:id', isAuthenticated, async (req, res) => {
     }
 });
 
-
-// Endpoint para adicionar um passageiro a uma viagem
-router.post('/:id/passengers', isAuthenticated, async (req, res) => {
+// Endpoint para reservar uma carona
+router.post('/:id/reserve', isAuthenticated, async (req, res) => {
     try {
         const ride = await Ride.findById(req.params.id);
 
@@ -201,17 +200,51 @@ router.post('/:id/passengers', isAuthenticated, async (req, res) => {
         }
 
         if (ride.passengers.includes(req.session.userId)) {
-            return res.status(400).send({ error: 'Você já está na lista de passageiros' });
+            return res.status(400).send({ error: 'Você já reservou essa carona.' });
         }
 
-        if (ride.passengers.length >= ride.seats) {
-            return res.status(400).send({ error: 'Não há mais assentos disponíveis' });
+        if (ride.seats <= ride.passengers.length) {
+            return res.status(400).send({ error: 'Não há mais assentos disponíveis.' });
         }
 
+        // Adiciona o usuário à lista de passageiros
         ride.passengers.push(req.session.userId);
+
+        // Diminui o número de assentos disponíveis
+        ride.seats -= 1;
+
         await ride.save();
 
-        res.status(200).send({ message: 'Passageiro adicionado com sucesso', ride });
+        res.status(200).send({ message: 'Reserva realizada com sucesso!', ride });
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+});
+
+// Endpoint para cancelar a reserva de uma carona
+router.post('/:id/cancel', isAuthenticated, async (req, res) => {
+    try {
+        const ride = await Ride.findById(req.params.id);
+
+        if (!ride) {
+            return res.status(404).send({ error: 'Viagem não encontrada' });
+        }
+
+        if (!ride.passengers.includes(req.session.userId)) {
+            return res.status(400).send({ error: 'Você não tem uma reserva nesta carona.' });
+        }
+
+        // Remove o usuário da lista de passageiros
+        ride.passengers = ride.passengers.filter(
+            (passengerId) => passengerId.toString() !== req.session.userId
+        );
+
+        // Aumenta o número de assentos disponíveis
+        ride.seats += 1;
+
+        await ride.save();
+
+        res.status(200).send({ message: 'Reserva cancelada com sucesso!', ride });
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
