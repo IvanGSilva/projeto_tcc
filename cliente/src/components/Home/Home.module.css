@@ -72,7 +72,7 @@ ul{
     padding: 10px;
     border-bottom: 1px solid #eee;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
 }
 
@@ -102,6 +102,11 @@ ul {
     transition: 0.5s;
 }
 
+.ride_result{
+    display: flex;
+    flex-direction: row;
+}
+
 .ride_data{
     display: flex;
     flex-direction: column;
@@ -112,10 +117,15 @@ ul {
     padding-top: 13%;
 }
 
-.driver_and_vahicle{
+.driver_and_vehicle{
     display: flex;
     flex-direction: column;
     width: 50%;
+}
+
+.ride_options{
+    width: 100%;
+    margin-left: 33%s;
 }
 
 .imageContainer {
