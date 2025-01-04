@@ -23,6 +23,7 @@ const App = () => {
     const handleLogout = () => {
         setIsAuthenticated(false);
         setCurrentPage('login'); // Redireciona para o login após logout
+        setLoggedUserId(''); // Limpa o ID do usuário ao fazer logout
     };
 
     const goToProfile = () => {
@@ -103,8 +104,7 @@ const App = () => {
                         </nav>
                     </div>
 
-                    {/* Conteúdo Dinâmico com base no estado */}
-                    {currentPage === 'home' && <Home />}
+                    {currentPage === 'home' && <Home loggedUserId={loggedUserId} />}
                     {currentPage === 'profile' && <UserProfile onLogout={handleLogout} />}
                     {currentPage === 'rideManager' && <RideManager loggedUserId={loggedUserId} />}
                 </>
