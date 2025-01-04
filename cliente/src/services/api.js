@@ -69,6 +69,26 @@ export const deleteRide = async (id) => {
     await axios.delete(`${API_URL}/${id}`);
 };
 
+// Função para reservar uma carona
+export const reserveRide = async (rideId) => {
+    try {
+        const response = await api.post(`/rides/${rideId}/reserve`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Erro ao reservar a carona.';
+    }
+};
+
+// Função para cancelar a reserva de uma carona
+export const cancelReservation = async (rideId) => {
+    try {
+        const response = await api.post(`/rides/${rideId}/cancel`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Erro ao cancelar a reserva.';
+    }
+};
+
 const apiServices = {
     api,
     createRide,
@@ -76,6 +96,9 @@ const apiServices = {
     updateRide,
     getRides,
     deleteRide,
+
+    reserveRide,
+    cancelReservation,
 }
 
 // Exportar todas as funções juntas
