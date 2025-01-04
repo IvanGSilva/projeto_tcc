@@ -181,7 +181,7 @@ router.post('/login', async (req, res) => {
             // Salvar o userId na sessão
             req.session.userId = user._id;
             console.log('Usuário autenticado, userId salvo na sessão:', req.session.userId);
-            res.status(200).json({ message: 'Login realizado com sucesso!' });
+            res.status(200).json({ userId: req.session.userId });
         } else {
             res.status(401).json({ error: 'Credenciais inválidas' });
         }
