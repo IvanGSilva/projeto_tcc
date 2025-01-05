@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { searchRides, reserveRide, cancelReservation } from '../../services/api';
+import MapComponent from './Map/Map';
 import styles from './Home.module.css';
 
 const Home = ({ loggedUserId }) => {
@@ -182,8 +183,9 @@ const Home = ({ loggedUserId }) => {
             </div>
 
             <div className={styles.map}>
-                {/* Mapa placeholder */}
+                <MapComponent />
             </div>
+
         </div>
     );
 };
