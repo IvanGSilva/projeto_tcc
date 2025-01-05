@@ -25,3 +25,6 @@ yarn-error.log*
 #packages
 package-lock.json
 package.json
+
+
+src/component/Home/Map/apikey.js
