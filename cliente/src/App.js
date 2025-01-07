@@ -1,55 +1,47 @@
 import React, { useState } from 'react';
+import { LoadScript } from '@react-google-maps/api';
 import Login from './components/User/Login/Login';
 import Register from './components/User/Register/Register';
 import UserProfile from './components/User/UserProfile/UserProfile';
 import RideManager from './components/Ride/RideManager/RideManager';
-import Home from './components/Home/Home'; // Componente da página inicial com pesquisa
+import Home from './components/Home/Home';
 import styles from './App.module.css';
+import apiKey from './components/Home/Map/apikey';
+
+// Define as bibliotecas fora do componente para evitar recriação
+const libraries = ['places'];
 
 const App = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [showRegister, setShowRegister] = useState(false); // Usado para alternar entre login e registro
-    const [currentPage, setCurrentPage] = useState('login'); // Exibe a tela de login por padrão
-    const [loggedUserId, setLoggedUserId] = useState(''); // Defina o ID do usuário logado
+    const [showRegister, setShowRegister] = useState(false);
+    const [currentPage, setCurrentPage] = useState('login');
+    const [loggedUserId, setLoggedUserId] = useState('');
 
     const handleLogin = (success, userId) => {
         setIsAuthenticated(success);
-        setLoggedUserId(userId); // Salva o ID do usuário logado
+        setLoggedUserId(userId);
         if (success) {
-            setCurrentPage('home'); // Redireciona para a página inicial após login
+            setCurrentPage('home');
         }
     };
 
     const handleLogout = () => {
         setIsAuthenticated(false);
-        setCurrentPage('login'); // Redireciona para o login após logout
-        setLoggedUserId(''); // Limpa o ID do usuário ao fazer logout
+        setCurrentPage('login');
+        setLoggedUserId('');
     };
 
-    const goToProfile = () => {
-        setCurrentPage('profile'); // Redireciona para o perfil do usuário
-    };
-
-    const goToHome = () => {
-        setCurrentPage('home'); // Redireciona para a home da aplicação quando já logado
-    };
-
-    const goToRideManager = () => {
-        setCurrentPage('rideManager');
-    }
-
-    const goToRegister = () => {
-        setShowRegister(true); // Mostra o formulário de registro
-    };
-
-    const goToLogin = () => {
-        setShowRegister(false); // Volta para a tela de login
-    };
+    const goToProfile = () => setCurrentPage('profile');
+    const goToHome = () => setCurrentPage('home');
+    const goToRideManager = () => setCurrentPage('rideManager');
+    const goToRegister = () => setShowRegister(true);
+    const goToLogin = () => setShowRegister(false);
 
     return (
-        <div>
-            {!isAuthenticated ? (
-                <>
+        <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
+            <div>
+                {!isAuthenticated ? (
+                    <>
                     <div className={styles.titleConteiner}>
                         <h1 className={styles.title}>Projeto de Mobilidade Urbana</h1>
                     </div>
@@ -80,40 +72,41 @@ const App = () => {
                         </div>
                     </div>
                 </>
-            ) : (
-                <>
-                    <div className={styles.loggedHeader}>
-                        <div className={styles.titleConteiner}>
-                            <h1 className={styles.title}>Projeto de Mobilidade Urbana</h1>
+                ) : (
+                    <>
+                        <div className={styles.loggedHeader}>
+                            <div className={styles.titleConteiner}>
+                                <h1 className={styles.title}>Projeto de Mobilidade Urbana</h1>
+                            </div>
+                            <nav className={styles.nav}>
+                                <ul className={styles.navList}>
+                                    <li className={styles.navItem}>
+                                        <button className={styles.navButton} onClick={goToHome}>Início</button>
+                                    </li>
+                                    <li className={styles.navItem}>
+                                        <button className={styles.navButton} onClick={goToRideManager}>Minhas Caronas</button>
+                                    </li>
+                                    <li className={styles.navItem}>
+                                        <button className={styles.navButton} onClick={goToProfile}>Meu Perfil</button>
+                                    </li>
+                                    <li className={styles.navItem}>
+                                        <button className={styles.navButton} onClick={handleLogout}>Logout</button>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
-                        <nav className={styles.nav}>
-                            <ul className={styles.navList}>
-                                <li className={styles.navItem}>
-                                    <button className={styles.navButton} onClick={goToHome}>Início</button>
-                                </li>
-                                <li className={styles.navItem}>
-                                    <button className={styles.navButton} onClick={goToRideManager}>Minhas Caronas</button>
-                                </li>
-                                <li className={styles.navItem}>
-                                    <button className={styles.navButton} onClick={goToProfile}>Meu Perfil</button>
-                                </li>
-                                <li className={styles.navItem}>
-                                    <button className={styles.navButton} onClick={handleLogout}>Logout</button>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
 
-                    {currentPage === 'home' && <Home loggedUserId={loggedUserId} />}
-                    {currentPage === 'profile' && <UserProfile onLogout={handleLogout} />}
-                    {currentPage === 'rideManager' && <RideManager loggedUserId={loggedUserId} />}
-                </>
-            )}
+                        {currentPage === 'home' && <Home loggedUserId={loggedUserId} />}
+                        {currentPage === 'profile' && <UserProfile onLogout={handleLogout} />}
+                        {currentPage === 'rideManager' && <RideManager loggedUserId={loggedUserId} />}
+                    </>
+                )}
+            </div>
             <div className={styles.footer}>
                 <p>&copy; 2024 Projeto de Mobilidade Urbana. Todos os direitos reservados.</p>
                 <p>Desenvolvido como parte do projeto de TCC de Ivan G. Silva.</p>
             </div>
-        </div>
+        </LoadScript>
     );
 };
 
