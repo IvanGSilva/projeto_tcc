@@ -164,6 +164,7 @@ const Home = ({ loggedUserId }) => {
                                                     <div><strong>Placa: </strong>{ride.vehicle.plate}</div>
                                                 </div>
                                             )}
+
                                         </div>
                                     </div>
                                 </li>

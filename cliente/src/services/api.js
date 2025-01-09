@@ -16,6 +16,7 @@ export const searchRides = async (filters) => {
             withCredentials: true, 
             params: filters 
         });
+        console.log(response.data);
         return response.data;
     } catch (error) {
         throw error.response?.data?.error || 'Erro ao buscar caronas.';

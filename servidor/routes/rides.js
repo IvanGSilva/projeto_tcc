@@ -143,11 +143,14 @@ router.get('/search', async (req, res) => {
         }
 
         // Busca as caronas com os filtros aplicados
-        const rides = await Ride.find(query);
+        const rides = await Ride.find(query)
+            .populate('driver', 'username profilePicture')  // Popula o motorista com os campos necessários
+            .populate('vehicle', 'model color plate');     // Popula o veículo com os campos necessários
 
         if (rides.length === 0) {
             return res.status(404).json({ error: 'Nenhuma carona encontrada com os filtros fornecidos.' });
         }
+        console.log(rides); // Verifique se os dados agora estão completos
 
         res.status(200).json(rides);
     } catch (error) {
@@ -155,6 +158,7 @@ router.get('/search', async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar caronas.' });
     }
 });
+
 
 
 
