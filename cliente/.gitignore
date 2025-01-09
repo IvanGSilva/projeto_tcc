@@ -27,4 +27,4 @@ package-lock.json
 package.json
 
 
-src/component/Home/Map/apikey.js
+cliente/src/components/Home/Map/apikey.js
