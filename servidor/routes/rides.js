@@ -123,6 +123,40 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+// Endpoint para buscar caronas por origem e destino
+router.get('/search', async (req, res) => {
+    const { origin, destination } = req.query;
+
+    try {
+        const query = {
+            status: { $ne: 'completed' }, // Exclui caronas com status "completed"
+        };
+
+        // Adiciona o filtro de origem, se fornecido
+        if (origin) {
+            query.origin = { $regex: new RegExp(origin, 'i') }; // Busca insensível a maiúsculas/minúsculas
+        }
+
+        // Adiciona o filtro de destino, se fornecido
+        if (destination) {
+            query.destination = { $regex: new RegExp(destination, 'i') }; // Busca insensível a maiúsculas/minúsculas
+        }
+
+        // Busca as caronas com os filtros aplicados
+        const rides = await Ride.find(query);
+
+        if (rides.length === 0) {
+            return res.status(404).json({ error: 'Nenhuma carona encontrada com os filtros fornecidos.' });
+        }
+
+        res.status(200).json(rides);
+    } catch (error) {
+        console.error('Erro ao buscar caronas:', error.message);
+        res.status(500).json({ error: 'Erro ao buscar caronas.' });
+    }
+});
+
+
 
 // Endpoint para listar as viagens do motorista logado
 router.get('/', async (req, res) => {

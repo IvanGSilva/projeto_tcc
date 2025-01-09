@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './RideForm.module.css';
 
 const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
@@ -12,32 +12,61 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
         driverId: loggedUserId, // Define o motorista como o usuário logado
     });
 
+    const originRef = useRef(null);
+    const destinationRef = useRef(null);
+
     useEffect(() => {
         if (rideId) {
             fetchRideData(rideId);
         }
     }, [rideId]);
-    
+
+    useEffect(() => {
+        if (window.google && originRef.current && destinationRef.current) {
+            const originInput = originRef.current;
+            const destinationInput = destinationRef.current;
+
+            if (originInput instanceof HTMLInputElement && destinationInput instanceof HTMLInputElement) {
+                const originAutocomplete = new window.google.maps.places.Autocomplete(originInput);
+                originAutocomplete.addListener('place_changed', () => {
+                    const place = originAutocomplete.getPlace();
+                    setRideData((prevData) => ({
+                        ...prevData,
+                        origin: place.formatted_address || '',
+                    }));
+                });
+
+                const destinationAutocomplete = new window.google.maps.places.Autocomplete(destinationInput);
+                destinationAutocomplete.addListener('place_changed', () => {
+                    const place = destinationAutocomplete.getPlace();
+                    setRideData((prevData) => ({
+                        ...prevData,
+                        destination: place.formatted_address || '',
+                    }));
+                });
+            }
+        }
+    }, []);
+
     const fetchRideData = async (id) => {
         try {
             const response = await fetch(`http://localhost:5000/api/rides/${id}`, {
                 method: 'GET',
                 credentials: 'include',
             });
-    
+
             if (response.ok) {
                 const data = await response.json();
-    
-                // Apenas continue se o loggedUserId for igual ao driver
+
                 if (data.driver !== loggedUserId) {
                     alert('Você não tem permissão para editar esta viagem.');
                     return;
                 }
-    
+
                 setRideData({
                     origin: data.origin,
                     destination: data.destination,
-                    date: data.date.split('T')[0], // Ajuste para o formato de input date
+                    date: data.date.split('T')[0],
                     time: data.time,
                     seats: data.seats,
                     status: data.status,
@@ -51,13 +80,12 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
             alert('Erro ao carregar dados da viagem');
         }
     };
-    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setRideData((prevData) => ({
             ...prevData,
-            [name]: value
+            [name]: value,
         }));
     };
 
@@ -65,9 +93,7 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
         e.preventDefault();
         try {
             const url = rideId
-                // Atualiza a viagem
                 ? `http://localhost:5000/api/rides/${rideId}?loggedUserId=${loggedUserId}`
-                // Cria uma nova viagem
                 : `http://localhost:5000/api/rides?loggedUserId=${loggedUserId}`;
 
             const method = rideId ? 'PUT' : 'POST';
@@ -109,6 +135,7 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
             <form className={styles.form} onSubmit={handleSubmit}>
                 <input
                     className={styles.input}
+                    ref={originRef}
                     type="text"
                     name="origin"
                     placeholder="Local de Origem"
@@ -118,6 +145,7 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
                 />
                 <input
                     className={styles.input}
+                    ref={destinationRef}
                     type="text"
                     name="destination"
                     placeholder="Local de Chegada"

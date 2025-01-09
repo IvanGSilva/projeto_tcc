@@ -12,33 +12,16 @@ const api = axios.create({
 // Função para buscar as caronas por origem e destino
 export const searchRides = async (filters) => {
     try {
-        // Filtro para excluir caronas com status "completed"
-        const updatedFilters = { 
-            ...filters, 
-            status: { $ne: 'completed' }
-        };
-
-        const response = await axios.get(`${API_URL}/search`, { withCredentials: true, params: updatedFilters });
+        const response = await axios.get(`${API_URL}/search`, { 
+            withCredentials: true, 
+            params: filters 
+        });
         return response.data;
     } catch (error) {
-        if (error.response) {
-            // Erro da resposta HTTP
-            if (error.response.status === 401) {
-                throw new Error('Não autorizado. Faça login para continuar.');
-            } else if (error.response.status === 404) {
-                throw new Error('Nenhuma viagem encontrada.');
-            } else {
-                throw new Error(error.response.data?.error || 'Erro desconhecido');
-            }
-        } else if (error.request) {
-            // A requisição foi feita, mas não obteve resposta
-            throw new Error('Erro de rede. Tente novamente mais tarde.');
-        } else {
-            // Erro ao configurar a requisição
-            throw new Error('Erro ao configurar a requisição.');
-        }
+        throw error.response?.data?.error || 'Erro ao buscar caronas.';
     }
 };
+
 
 // Função para criar uma nova carona
 export const createRide = async (rideData) => {
