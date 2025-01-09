@@ -108,7 +108,7 @@ router.put('/:id', async (req, res) => {
         // Atualiza os campos permitidos
         ride.origin = origin || ride.origin;
         ride.destination = destination || ride.destination;
-        ride.date = date ? new Date(date) : ride.date; // Certifique-se do formato
+        ride.date = date ? new Date(date) : ride.date;
         ride.time = time || ride.time;
         ride.seats = seats || ride.seats;
         ride.status = status || ride.status;
@@ -159,9 +159,6 @@ router.get('/search', async (req, res) => {
     }
 });
 
-
-
-
 // Endpoint para listar as viagens do motorista logado
 router.get('/', async (req, res) => {
     const { loggedUserId } = req.query;
@@ -189,7 +186,7 @@ router.get('/:id', async (req, res) => {
 
 // Endpoint para excluir uma viagem pelo ID
 router.delete('/:id', async (req, res) => {
-    const { loggedUserId } = req.body;
+    const loggedUserId = req.query.loggedUserId || req.body.loggedUserId;
 
     try {
         const ride = await Ride.findById(req.params.id);
@@ -198,8 +195,11 @@ router.delete('/:id', async (req, res) => {
             return res.status(404).send({ error: 'Viagem não encontrada' });
         }
 
+        // Verifica se o motorista da viagem é o usuário logado
         if (ride.driver.toString() !== loggedUserId) {
-            return res.status(403).send({ error: 'Você não tem permissão para excluir esta viagem' });
+            return res
+                .status(403)
+                .send({ error: 'Você não tem permissão para deletar esta viagem.' });
         }
 
         await Ride.findByIdAndDelete(req.params.id);

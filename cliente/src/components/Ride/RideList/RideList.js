@@ -117,7 +117,7 @@ const RideList = ({ loggedUserId, onEdit, onDelete, onComplete }) => {
                                 <button
                                     className={styles.button}
                                     onClick={async () => {
-                                        await fetch(`/api/rides/${ride._id}`, {
+                                        await fetch(`http://localhost:5000/api/rides/${ride._id}`, {
                                             method: 'DELETE',
                                             body: JSON.stringify({ loggedUserId }),
                                             headers: {
