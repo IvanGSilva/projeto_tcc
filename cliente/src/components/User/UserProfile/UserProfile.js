@@ -24,14 +24,14 @@ const formatPhone = (phone) => {
     return `${countryCode} (${areaCode}) ${firstPart}-${secondPart}`;
 };
 
-const UserProfile = ({ onLogout }) => {
+const UserProfile = ({ loggedUserId, onLogout }) => {
     const [userData, setUserData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [showVehicleForm, setShowVehicleForm] = useState(false);
 
     const fetchUserData = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/users/profile', { withCredentials: true });
+            const response = await axios.get(`http://localhost:5000/api/users/profile?userId=${loggedUserId}`, { withCredentials: true });
             setUserData(response.data);
         } catch (error) {
             console.error('Erro ao obter perfil:', error);
@@ -56,9 +56,7 @@ const UserProfile = ({ onLogout }) => {
     };
 
     const handleSave = () => {
-        // Lógica para atualizar a lista de veículos ou fazer qualquer outra coisa necessária após salvar o veículo.
         console.log('Veículo salvo!');
-        // Exemplo: você pode adicionar lógica aqui para atualizar a lista de veículos ou outras ações.
     };
 
     const getGenderLabel = (gender) => {
@@ -71,7 +69,7 @@ const UserProfile = ({ onLogout }) => {
     };
 
     if (isEditing) {
-        return <EditProfile onBack={handleProfileUpdated} />;
+        return <EditProfile userId={loggedUserId} onBack={handleProfileUpdated} />;
     }
 
     return (
@@ -121,7 +119,7 @@ const UserProfile = ({ onLogout }) => {
                 {userData?.cnh ? (
                     <>
                         <div>
-                            <ListVehicle />
+                            <ListVehicle userId={loggedUserId} />
                         </div>
                         {!showVehicleForm ? (
                             <button className={styles.button} onClick={toggleVehicleForm}>
@@ -130,8 +128,9 @@ const UserProfile = ({ onLogout }) => {
                         ) : (
                             <>
                                 <RegisterVehicle
+                                    userId={loggedUserId}
                                     onClose={toggleVehicleForm}
-                                    onSave={handleSave}  // Passando a função handleSave aqui
+                                    onSave={handleSave}
                                 />
                                 <button className={styles.button} onClick={toggleVehicleForm}>
                                     Cancelar

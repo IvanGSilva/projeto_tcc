@@ -1,20 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './RideList.module.css';
 
-// Função para formatar a data corretamente considerando o fuso horário local
-const formatDate = (isoDate) => {
-    const date = new Date(isoDate);
+const RideList = ({ loggedUserId, onEdit, onDelete, onComplete }) => {
+    const [rides, setRides] = useState([]);
+    
+    // Função para formatar a data corretamente considerando o fuso horário local
+    const formatDate = (isoDate) => {
+        const date = new Date(isoDate);
+        date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
 
-    // Ajustando a data para o fuso horário local
-    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+        const day = String(date.getDate() + 1).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
 
-    const day = String(date.getDate() + 1).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-};
-
-const RideList = ({ rides, onEdit, onDelete, onComplete }) => {
     // Função para formatar o horário no formato HH:mm
     const formatTime = (time) => {
         return time ? time.substring(0, 5) : '--:--';
@@ -34,8 +34,47 @@ const RideList = ({ rides, onEdit, onDelete, onComplete }) => {
         }
     };
 
+    // Função para buscar as viagens do motorista logado
+    const fetchRides = async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/rides?loggedUserId=${loggedUserId}`);
+            const data = await response.json();
+            setRides(data);
+        } catch (error) {
+            console.error('Erro ao carregar as viagens:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchRides();
+    }, [loggedUserId]);
+
     // Filtra as viagens para mostrar apenas aquelas que não estão finalizadas
     const filteredRides = rides.filter(ride => ride.status !== 'completed');
+
+    // Função para finalizar a carona, alterando o status para 'completed'
+    const handleCompleteRide = async (rideId) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/rides/${rideId}?loggedUserId${loggedUserId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    loggedUserId,
+                    status: 'completed', // Apenas alterando o status para 'completed'
+                }),
+            });
+
+            if (response.ok) {
+                fetchRides(); // Atualiza a lista após a alteração do status
+            } else {
+                console.error('Erro ao finalizar a carona');
+            }
+        } catch (error) {
+            console.error('Erro ao finalizar a carona:', error);
+        }
+    };
 
     return (
         <div className={styles.listDiv}>
@@ -77,14 +116,23 @@ const RideList = ({ rides, onEdit, onDelete, onComplete }) => {
                                 </button>
                                 <button
                                     className={styles.button}
-                                    onClick={() => onDelete(ride._id)}
+                                    onClick={async () => {
+                                        await fetch(`/api/rides/${ride._id}`, {
+                                            method: 'DELETE',
+                                            body: JSON.stringify({ loggedUserId }),
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                            },
+                                        });
+                                        fetchRides(); // Atualiza a lista após exclusão
+                                    }}
                                 >
                                     Deletar
                                 </button>
                                 {ride.status !== 'completed' && (
                                     <button
                                         className={styles.button}
-                                        onClick={() => onComplete(ride._id)}
+                                        onClick={() => handleCompleteRide(ride._id)} 
                                     >
                                         Finalizar Carona
                                     </button>

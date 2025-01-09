@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './EditProfile.module.css';
 
-const EditProfile = ({ onBack }) => {
+const EditProfile = ({ userId, onBack }) => {
     const [userData, setUserData] = useState(null);
     const [isLoading, setIsLoading] = useState(false); // Indicador de carregamento
     const [profilePicture, setProfilePicture] = useState(null); // Foto de perfil
@@ -10,7 +10,7 @@ const EditProfile = ({ onBack }) => {
         // Busca os dados do usuário para preencher o formulário
         const fetchUserData = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/users/profile', {
+                const response = await fetch(`http://localhost:5000/api/users/profile?userId=${userId}`, {
                     method: 'GET',
                     credentials: 'include',
                 });
@@ -27,11 +27,13 @@ const EditProfile = ({ onBack }) => {
         };
 
         fetchUserData();
-    }, []);
+    }, [userId]);
 
     const handleUpdate = async (e) => {
         e.preventDefault();
         const formData = new FormData();
+        
+        // Verifica se o valor existe antes de adicionar ao formData
         if (userData.username) formData.append('username', userData.username);
         if (userData.email) formData.append('email', userData.email);
         if (userData.dateOfBirth) formData.append('dateOfBirth', userData.dateOfBirth);
@@ -43,7 +45,7 @@ const EditProfile = ({ onBack }) => {
 
         setIsLoading(true);
         try {
-            const response = await fetch('http://localhost:5000/api/users/profile', {
+            const response = await fetch(`http://localhost:5000/api/users/profile?userId=${userId}`, {
                 method: 'PUT',
                 body: formData,
                 credentials: 'include',
@@ -51,7 +53,7 @@ const EditProfile = ({ onBack }) => {
 
             if (response.ok) {
                 alert('Perfil atualizado com sucesso!');
-                onBack();
+                onBack();  // Voltar para a tela anterior após sucesso
             } else {
                 const errorData = await response.json();
                 alert(`Erro ao atualizar perfil: ${errorData.error || 'Erro desconhecido'}`);

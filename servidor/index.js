@@ -45,11 +45,16 @@ app.use(session({
     secret: 'senhaCookies',
     resave: false,
     saveUninitialized: false, // Somente salva se houver mudanças
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    store: MongoStore.create({ 
+        mongoUrl: process.env.MONGODB_URI,
+        ttl: 14 * 24 * 60 * 60,
+        autoRemove: 'interval',
+        autoRemoveInterval: 10
+    }),
     cookie: {
-        secure: false, // Definir como true em produção (com HTTPS)
-        httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24, // Expira em 1 dia
+        httpOnly: true,
+        secure: false, // Definir como true em produção (com HTTPS)
         sameSite: 'None',
     }
 }));

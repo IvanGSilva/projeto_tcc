@@ -7,10 +7,9 @@ import styles from './RideManager.module.css';
 const RideManager = ({ loggedUserId }) => {
     const [rides, setRides] = useState([]);
     const [selectedRideId, setSelectedRideId] = useState(null);
-    // Estado para controlar a exibição do histórico
     const [showHistory, setShowHistory] = useState(false);
 
-    // Buscar viagens do servidor
+    // Função para buscar as viagens do servidor
     const fetchRides = async () => {
         try {
             const response = await fetch('http://localhost:5000/api/rides', {
@@ -30,16 +29,18 @@ const RideManager = ({ loggedUserId }) => {
         }
     };
 
-    // Atualiza o estado de viagens após salvar ou excluir uma viagem
+    // Função para manipular a submissão do formulário
     const handleFormSubmit = () => {
-        fetchRides();
-        setSelectedRideId(null); // Limpa a seleção após o envio do formulário
+        fetchRides();  // Atualiza as viagens após a criação ou edição
+        setSelectedRideId(null);  // Limpa a seleção após o envio
     };
 
+    // Função para editar uma viagem
     const handleEdit = (rideId) => {
-        setSelectedRideId(rideId);
+        setSelectedRideId(rideId);  // Define a viagem selecionada para edição
     };
 
+    // Função para excluir uma viagem
     const handleDelete = async (rideId) => {
         try {
             const response = await fetch(`http://localhost:5000/api/rides/${rideId}`, {
@@ -49,7 +50,7 @@ const RideManager = ({ loggedUserId }) => {
 
             if (response.ok) {
                 alert('Viagem excluída com sucesso!');
-                fetchRides();
+                fetchRides();  // Atualiza a lista após exclusão
             } else {
                 alert('Erro ao excluir a viagem');
             }
@@ -59,7 +60,7 @@ const RideManager = ({ loggedUserId }) => {
         }
     };
 
-    // Função para finalizar a carona
+    // Função para finalizar uma carona
     const handleComplete = async (rideId) => {
         try {
             const response = await fetch(`http://localhost:5000/api/rides/${rideId}`, {
@@ -73,8 +74,7 @@ const RideManager = ({ loggedUserId }) => {
 
             if (response.ok) {
                 alert('Carona finalizada com sucesso!');
-                // Atualiza a lista de viagens
-                fetchRides();
+                fetchRides();  // Atualiza a lista após finalizar a viagem
             } else {
                 alert('Erro ao finalizar a carona');
             }
@@ -84,6 +84,7 @@ const RideManager = ({ loggedUserId }) => {
         }
     };
 
+    // Hook useEffect para carregar as viagens quando o componente é montado
     useEffect(() => {
         fetchRides();
     }, []);
@@ -91,20 +92,28 @@ const RideManager = ({ loggedUserId }) => {
     return (
         <div className={styles.container}>
             <div className={styles.formColumn}>
-                <RideForm rideId={selectedRideId} onFormSubmit={handleFormSubmit} loggedUserId={loggedUserId} />
+                <RideForm
+                    rideId={selectedRideId}
+                    onFormSubmit={handleFormSubmit}
+                    loggedUserId={loggedUserId}
+                />
             </div>
 
             <div className={styles.listColumn}>
                 <div className={styles.historyToggle}>
                     <button onClick={() => setShowHistory(!showHistory)} className={styles.button}>
-                        {showHistory ? 'Voltar' : <><i class="fa-solid fa-clock"></i> Histórico de Viagens</>}
+                        {showHistory ? 'Voltar' : <><i className="fa-solid fa-clock"></i> Histórico de Viagens</>}
                     </button>
                 </div>
 
                 {showHistory ? (
-                    <RideHistory rides={rides.filter(ride => ride.status === 'completed')} />
+                    <RideHistory
+                        rides={rides.filter(ride => ride.status === 'completed')}
+                        loggedUserId={loggedUserId}
+                    />
                 ) : (
                     <RideList
+                        loggedUserId={loggedUserId}
                         rides={rides}
                         onEdit={handleEdit}
                         onDelete={handleDelete}

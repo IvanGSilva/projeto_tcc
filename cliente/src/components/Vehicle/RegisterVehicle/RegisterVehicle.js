@@ -45,38 +45,49 @@ const RegisterVehicle = ({ userId, vehicleData = null, onClose, onSave }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         if (!brandSelecionada || !modelSelecionado || !year || !plate) {
             alert('Por favor, preencha todos os campos.');
             return;
         }
-
+    
         const vehicle = {
-            userId: userId,
             brand: brandSelecionada.label,
             model: modelSelecionado.label,
             year,
             color,
-            plate
+            plate,
         };
-
+    
         try {
-            if (vehicleData) {
-                // Editar um veiculo
-                await axios.put(`http://localhost:5000/api/vehicles/${vehicleData._id}`, vehicle, { withCredentials: true });
-                alert('Veículo atualizado com sucesso!');
+            const url = vehicleData
+                ? `http://localhost:5000/api/vehicles/${vehicleData._id}?userId=${userId}`
+                : `http://localhost:5000/api/vehicles?userId=${userId}`;
+    
+            const method = vehicleData ? 'PUT' : 'POST';
+            const response = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(vehicle),
+                credentials: 'include',
+            });
+    
+            if (response.ok) {
+                alert('Veículo ' + (vehicleData ? 'atualizado' : 'cadastrado') + ' com sucesso!');
+                onSave();
+                onClose();
             } else {
-                // Criar um novo veiculo
-                await axios.post('http://localhost:5000/api/vehicles', vehicle, { withCredentials: true });
-                alert('Veículo cadastrado com sucesso!');
+                const errorData = await response.json();
+                alert(`Erro ao ${vehicleData ? 'atualizar' : 'cadastrar'} veículo: ${errorData.error || 'Erro desconhecido'}`);
             }
-            onSave();
-            onClose();
         } catch (error) {
             console.error('Erro ao salvar veículo:', error);
-            alert('Erro ao salvar veículo: ' + error.message);
+            alert('Erro ao salvar veículo');
         }
     };
+    
 
     return (
         <div className={styles.container}>

@@ -12,29 +12,28 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
         driverId: loggedUserId, // Define o motorista como o usuário logado
     });
 
-    // Carrega dados da viagem se for uma edição
     useEffect(() => {
         if (rideId) {
             fetchRideData(rideId);
         }
     }, [rideId]);
-
+    
     const fetchRideData = async (id) => {
         try {
             const response = await fetch(`http://localhost:5000/api/rides/${id}`, {
                 method: 'GET',
                 credentials: 'include',
             });
-
+    
             if (response.ok) {
                 const data = await response.json();
-
-                // Verifica se a viagem pertence ao motorista logado
-                if (data.driver === loggedUserId) {
+    
+                // Apenas continue se o loggedUserId for igual ao driver
+                if (data.driver !== loggedUserId) {
                     alert('Você não tem permissão para editar esta viagem.');
                     return;
                 }
-
+    
                 setRideData({
                     origin: data.origin,
                     destination: data.destination,
@@ -42,7 +41,7 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
                     time: data.time,
                     seats: data.seats,
                     status: data.status,
-                    driverId: data.driver
+                    driverId: data.driver,
                 });
             } else {
                 alert('Erro ao carregar dados da viagem');
@@ -52,6 +51,7 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
             alert('Erro ao carregar dados da viagem');
         }
     };
+    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -65,8 +65,10 @@ const RideForm = ({ rideId, onFormSubmit, loggedUserId }) => {
         e.preventDefault();
         try {
             const url = rideId
-                ? `http://localhost:5000/api/rides/${rideId}`  // Atualiza a viagem
-                : 'http://localhost:5000/api/rides';           // Cria uma nova viagem
+                // Atualiza a viagem
+                ? `http://localhost:5000/api/rides/${rideId}?loggedUserId=${loggedUserId}`
+                // Cria uma nova viagem
+                : `http://localhost:5000/api/rides?loggedUserId=${loggedUserId}`;
 
             const method = rideId ? 'PUT' : 'POST';
 

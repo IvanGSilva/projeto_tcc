@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const { isAgeValid, isCPFValid, isCNHValid } = require('../utils/validators');
 const router = express.Router();
+const mongoose = require('mongoose');
 
 // Configuração do multer para armazenar a foto
 const storage = multer.diskStorage({
@@ -110,12 +111,78 @@ router.post('/register', upload, async (req, res) => {
     }
 });
 
+// Endpoint para login
+router.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+        if (user && await bcrypt.compare(password, user.password)) {
+            // Salvar o userId na sessão
+            req.session.userId = user._id;
+            console.log('Usuário autenticado, userId salvo na sessão:', req.session.userId);
+            res.status(200).json({ userId: req.session.userId });
+        } else {
+            res.status(401).json({ error: 'Credenciais inválidas' });
+        }
+    } catch (error) {
+        res.status(400).json({ error: 'Erro ao fazer login' });
+    }
+});
+
+// Endpoint para logout
+router.post('/logout', (req, res) => {
+    // Destói a sessão
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erro ao fazer logout' });
+        }
+        res.status(200).json({ message: 'Logout realizado com sucesso!' });
+    });
+});
+
+// Rota para obter o perfil do usuário
+router.get('/profile', async (req, res) => {
+    const { userId } = req.query;
+
+    // Verifica se o userId é válido
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        console.log('userId inválido:', userId);
+        return res.status(400).json({ error: 'userId inválido' });
+    }
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+
+        const profilePictureWebP = user.profilePicture
+            ? `${path.basename(user.profilePicture, path.extname(user.profilePicture))}.webp`
+            : null;
+
+        res.json({
+            username: user.username,
+            email: user.email,
+            cpf: user.cpf,
+            phone: user.phone,
+            gender: user.gender,
+            dateOfBirth: user.dateOfBirth,
+            cnh: user.cnh,
+            profilePicture: profilePictureWebP,
+        });
+    } catch (err) {
+        console.error('Erro ao obter perfil:', err);
+        res.status(500).json({ error: 'Erro ao obter perfil' });
+    }
+});
+
 // Endpoint para editar o usuário logado
 router.put('/profile', upload, async (req, res) => {
-    const userId = req.session.userId;
+    const { userId } = req.query;  // Acesse o userId da query string
 
-    if (!userId) {
-        return res.status(401).json({ error: 'Usuário não autenticado' });
+    // Verifica se o usuário está autenticado
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(401).json({ error: 'Usuário não autenticado ou userId inválido' });
     }
 
     const { username, email, dateOfBirth, cpf, phone, gender, cnh } = req.body;
@@ -171,73 +238,5 @@ router.put('/profile', upload, async (req, res) => {
     }
 });
 
-
-// Endpoint para login
-router.post('/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const user = await User.findOne({ email });
-        if (user && await bcrypt.compare(password, user.password)) {
-            // Salvar o userId na sessão
-            req.session.userId = user._id;
-            console.log('Usuário autenticado, userId salvo na sessão:', req.session.userId);
-            res.status(200).json({ userId: req.session.userId });
-        } else {
-            res.status(401).json({ error: 'Credenciais inválidas' });
-        }
-    } catch (error) {
-        res.status(400).json({ error: 'Erro ao fazer login' });
-    }
-});
-
-
-// Rota para obter o perfil do usuário
-router.get('/profile', async (req, res) => {
-    console.log('Sessão atual:', req.session); // Exibe a sessão inteira
-    if (!req.session.userId) {
-        console.log('Usuário não autenticado - sessão não contém userId');
-        return res.status(401).json({ error: 'Usuário não autenticado' });
-    }
-
-    try {
-        const user = await User.findById(req.session.userId);
-        if (!user) {
-            return res.status(404).json({ error: 'Usuário não encontrado' });
-        }
-
-        // Gera o nome correto do arquivo .webp
-        const profilePictureWebP = user.profilePicture
-            ? `${path.basename(user.profilePicture, path.extname(user.profilePicture))}.webp`
-            : null;
-
-        console.log('Usuário autenticado, dados do perfil retornados:', user);
-        res.json({
-            username: user.username,
-            email: user.email,
-            cpf: user.cpf,
-            phone: user.phone,
-            gender: user.gender,
-            dateOfBirth: user.dateOfBirth,
-            cnh: user.cnh,
-            profilePicture: profilePictureWebP, // Retorna o nome correto do arquivo convertido
-        });
-    } catch (err) {
-        console.error('Erro ao obter perfil:', err);
-        res.status(500).json({ error: 'Erro ao obter perfil' });
-    }
-});
-
-
-
-// Endpoint para logout
-router.post('/logout', (req, res) => {
-    // Destói a sessão
-    req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).json({ error: 'Erro ao fazer logout' });
-        }
-        res.status(200).json({ message: 'Logout realizado com sucesso!' });
-    });
-});
 
 module.exports = router;

@@ -97,7 +97,7 @@ const App = () => {
                         </div>
 
                         {currentPage === 'home' && <Home loggedUserId={loggedUserId} />}
-                        {currentPage === 'profile' && <UserProfile onLogout={handleLogout} />}
+                        {currentPage === 'profile' && <UserProfile loggedUserId={loggedUserId} onLogout={handleLogout} />}
                         {currentPage === 'rideManager' && <RideManager loggedUserId={loggedUserId} />}
                     </>
                 )}

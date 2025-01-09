@@ -3,14 +3,17 @@ import axios from 'axios';
 import RegisterVehicle from '../RegisterVehicle/RegisterVehicle';
 import styles from './ListVehicle.module.css';
 
-const ListVehicle = () => {
+const ListVehicle = ({ userId }) => {
     const [vehicles, setVehicles] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
     const [editingVehicle, setEditingVehicle] = useState(null);
 
     const fetchVehicles = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/vehicles', { withCredentials: true });
+            const response = await axios.get(`http://localhost:5000/api/vehicles`, {
+                params: { userId },
+                withCredentials: true,
+            });
             setVehicles(response.data);
         } catch (error) {
             console.error('Erro ao buscar veículos:', error);
@@ -42,13 +45,15 @@ const ListVehicle = () => {
     };
 
     useEffect(() => {
-        fetchVehicles();
-    }, []);
+        if (userId) {
+            fetchVehicles();
+        }
+    }, [userId]);
 
     if (isEditing) {
         return (
             <RegisterVehicle
-                userId={null}
+                userId={userId}
                 vehicleData={editingVehicle}
                 onClose={() => setIsEditing(false)}
                 onSave={handleSave}
