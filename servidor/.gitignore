@@ -33,4 +33,4 @@ package.json
 servidor/uploads/original/*
 servidor/uploads/webp/*
 
-../apikey.js
+**/apikey.js
