@@ -2,7 +2,49 @@ const express = require('express');
 const Ride = require('../models/Ride');
 const Vehicle = require('../models/Vehicle');
 const { isRideDateTimeValid, isSeatsValid } = require('../utils/validators');
+const {API_KEY} = require('../utils/apikey');
 const router = express.Router();
+const axios = require('axios');
+
+// Função para calcular a distância utilizando a API do Google Maps
+const calculateDistance = async (origin, destination) => {
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${encodeURIComponent(
+        origin
+    )}&destinations=${encodeURIComponent(destination)}&key=${API_KEY}`;
+
+    try {
+        const response = await axios.get(url);
+        const data = response.data;
+
+        if (
+            data.rows &&
+            data.rows[0] &&
+            data.rows[0].elements &&
+            data.rows[0].elements[0].status === 'OK'
+        ) {
+            const distanceInMeters = data.rows[0].elemen
+            ts[0].distance.value;
+            const distanceInKm = distanceInMeters / 1000; 
+            return distanceInKm;
+        } else {
+            throw new Error('Não foi possível calcular a distância entre os endereços.');
+        }
+    } catch (error) {
+        console.error('Erro ao calcular distância:', error.message);
+        throw new Error('Erro ao calcular distância.');
+    }
+};
+
+// Função para calcular o preço da carona com base na distancia
+const calculatePrice = async (distance, seats) =>{
+    try {
+        const price = (distance*5)/seats;
+        return price;
+    } catch (error){
+        console.error('Erro ao calcular o preço da carona:', error.message);
+        throw new Error('Erro ao calcular o preço');
+    }
+}
 
 // Endpoint para criar uma nova viagem
 router.post('/', async (req, res) => {
@@ -10,116 +52,82 @@ router.post('/', async (req, res) => {
         const loggedUserId = req.query.loggedUserId || req.body.loggedUserId;
         const { origin, destination, date, time, seats, vehicleId } = req.body;
 
-        // Validação básica dos novos campos
         if (!origin || !destination || !date || !time || !seats) {
-            if(seats == 0){
-                return res.status(400).send({ error: 'A viagem deve ter pelo menos 1 assento disponível.' });
-            }
             return res.status(400).send({ error: 'Todos os campos são obrigatórios.' });
         }
 
-        // Valida a data e hora
-        const { valid: dateTimeValid, error: dateTimeError } = isRideDateTimeValid(date, time);
-        if (!dateTimeValid) {
-            return res.status(400).send({ error: dateTimeError });
-        }
+        const distance = await calculateDistance(origin, destination);
+        const price = await calculatePrice(distance, seats);
 
-        // Valida o número de assentos
-        const { valid: seatsValid, error: seatsError } = isSeatsValid(seats);
-        if (!seatsValid) {
-            return res.status(400).send({ error: seatsError });
-        }
-
-        // Buscar os veículos do motorista logado
         const vehicles = await Vehicle.find({ userId: loggedUserId });
+        const selectedVehicle = vehicleId
+            ? vehicles.find(vehicle => vehicle._id.toString() === vehicleId)
+            : vehicles[0];
 
-        // Caso o motorista tenha apenas um veículo, associamos automaticamente à viagem
-        if (vehicles.length === 1) {
-            // Associar o único veículo automaticamente à viagem
-            const rideData = {
-                driver: loggedUserId,
-                vehicle: vehicles[0]._id, // Veículo automaticamente associado
-                origin,
-                destination,
-                date: new Date(date),
-                time,
-                seats,
-                passengers: [], // Inicialmente sem passageiros
-                status: 'not_started', // Status padrão
-            };
-            const ride = new Ride(rideData);
-            await ride.save();
-            return res.status(201).json(ride);
-        }
-
-        // Caso o motorista tenha mais de um veículo,  ele escolhe um
-        if (vehicles.length > 1 && !vehicleId) {
-            return res.status(400).send({ error: 'Escolha um veículo para a viagem' });
-        }
-
-        // Se o veículo foi escolhido ou o motorista tem apenas um veículo
-        const selectedVehicle = vehicles.find(vehicle => vehicle._id.toString() === vehicleId);
-        
         if (!selectedVehicle) {
             return res.status(400).send({ error: 'Veículo inválido' });
         }
 
-        // Criar a viagem com o veículo selecionado
         const rideData = {
             driver: loggedUserId,
-            vehicle: selectedVehicle._id, // Veículo escolhido
+            vehicle: selectedVehicle._id,
             origin,
             destination,
             date: new Date(date),
             time,
             seats,
-            passengers: [], // Inicialmente sem passageiros
-            status: 'not_started', // Status padrão
+            passengers: [],
+            status: 'not_started',
+            distance,
+            price,
         };
 
         const ride = new Ride(rideData);
         await ride.save();
-
         res.status(201).json(ride);
     } catch (error) {
-        res.status(400).send({ error: error.message });
+        console.error('Erro ao criar carona:', error.message);
+        res.status(500).send({ error: error.message });
     }
 });
 
 // Endpoint para atualizar uma viagem pelo ID
 router.put('/:id', async (req, res) => {
-    const loggedUserId = req.query.loggedUserId || req.body.loggedUserId;
-    const { origin, destination, date, time, seats, status } = req.body;
-
     try {
-        const ride = await Ride.findById(req.params.id);
+        const rideId = req.params.id;
+        const loggedUserId = req.query.loggedUserId || req.body.loggedUserId;
+        const { origin, destination, date, time, seats, status } = req.body;
 
+        if (!origin || !destination || !date || !time || !seats) {
+            return res.status(400).send({ error: 'Todos os campos são obrigatórios.' });
+        }
+
+        const distance = await calculateDistance(origin, destination);
+        const price = await calculatePrice(distance, seats);
+
+        const ride = await Ride.findById(rideId);
         if (!ride) {
-            return res.status(404).send('Viagem não encontrada');
+            return res.status(404).send({ error: 'Carona não encontrada.' });
         }
 
-        // Verifica se o motorista da viagem é o usuário logado
         if (ride.driver.toString() !== loggedUserId) {
-            return res
-                .status(403)
-                .send({ error: 'Você não tem permissão para editar esta viagem.' });
+            return res.status(403).send({ error: 'Você não tem permissão para editar esta carona.' });
         }
 
-        // Atualiza os campos permitidos
-        ride.origin = origin || ride.origin;
-        ride.destination = destination || ride.destination;
-        ride.date = date ? new Date(date) : ride.date;
-        ride.time = time || ride.time;
-        ride.seats = seats || ride.seats;
+        ride.origin = origin;
+        ride.destination = destination;
+        ride.date = new Date(date);
+        ride.time = time;
+        ride.seats = seats;
         ride.status = status || ride.status;
+        ride.distance = distance;
+        ride.price = price;
 
-        // Salva a viagem atualizada
         await ride.save();
-
-        res.status(200).send(ride);
+        res.status(200).json(ride);
     } catch (error) {
-        console.error('Erro ao atualizar viagem:', error.message);
-        res.status(400).send({ error: error.message });
+        console.error('Erro ao atualizar carona:', error.message);
+        res.status(500).send({ error: error.message });
     }
 });
 
@@ -182,7 +190,6 @@ router.get('/:id', async (req, res) => {
         res.status(400).send({ error: error.message });
     }
 });
-
 
 // Endpoint para excluir uma viagem pelo ID
 router.delete('/:id', async (req, res) => {
