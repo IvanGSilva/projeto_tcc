@@ -20,8 +20,6 @@
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    /* margin: 20px; */
-    /* background-image: url(https://i.pinimg.com/736x/1b/af/a1/1bafa1872f09a318f36eddc6c538c0c8.jpg); */
 }
 
 .rideSearchForm{
@@ -113,9 +111,7 @@ ul {
     min-width: 50%;
 }
 
-.ride_data:first-child{
-    padding-top: 13%;
-}
+
 
 .driver_and_vehicle{
     display: flex;
@@ -135,4 +131,19 @@ ul {
 .profileImage {
     max-width: 50px;
     border-radius: 100%;
+}
+.icon_value{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+.icon_value>i{
+    line-height: 0;
+    height: 0px;
+    margin-top: 12px;
+}
+.icon_value>p{
+    margin: 0px;
 }

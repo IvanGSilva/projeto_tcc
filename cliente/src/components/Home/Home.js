@@ -38,6 +38,24 @@ const Home = ({ loggedUserId }) => {
         }
     }, []);
 
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+        }).format(price);
+    };
+
+    const formatDistance = (distance) => {
+        return distance.toLocaleString('pt-BR', {
+            maximumFractionDigits: 2,
+        }) + ' km';
+    };
+
+    const formatAddress = (address) => {
+        const regex = /, [A-Za-z\s]+ - [A-Za-z\s]+, \d{5}-\d{3}, Brasil$/;
+        return address.replace(regex, '');
+    };
+
     const handleSearch = async () => {
         if (!origin || !destination) {
             alert('Por favor, preencha ambos os campos!');
@@ -135,8 +153,16 @@ const Home = ({ loggedUserId }) => {
                                 <li className={styles.listItem} key={ride._id}>
                                     <div className={styles.ride_result}>
                                         <div className={styles.ride_data}>
-                                            <div><strong>Origem:</strong> {ride.origin}</div>
-                                            <div><strong>Destino:</strong> {ride.destination}</div>
+                                            <div className={styles.icon_value}>
+                                                <i className="fa-solid fa-money-bill-wave"></i>
+                                                <p>{formatPrice(ride.price)}</p>
+                                            </div>
+                                            <div className={styles.icon_value}>
+                                                <i className="fa-solid fa-road"></i>
+                                                <p>{formatDistance(ride.distance)}</p>
+                                            </div>
+                                            <div><strong>Origem:</strong> {formatAddress(ride.origin)}</div>
+                                            <div><strong>Destino:</strong> {formatAddress(ride.destination)}</div>
                                             <div><strong>Data:</strong> {formattedDate}</div>
                                             <div><strong>Assentos:</strong> {ride.seats}</div>
                                         </div>
@@ -164,7 +190,6 @@ const Home = ({ loggedUserId }) => {
                                                     <div><strong>Placa: </strong>{ride.vehicle.plate}</div>
                                                 </div>
                                             )}
-
                                         </div>
                                     </div>
                                 </li>
