@@ -4,47 +4,6 @@ const Vehicle = require('../models/Vehicle');
 const { isRideDateTimeValid, isSeatsValid } = require('../utils/validators');
 const {API_KEY} = require('../utils/apikey');
 const router = express.Router();
-const axios = require('axios');
-
-// Função para calcular a distância utilizando a API do Google Maps
-const calculateDistance = async (origin, destination) => {
-    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${encodeURIComponent(
-        origin
-    )}&destinations=${encodeURIComponent(destination)}&key=${API_KEY}`;
-
-    try {
-        const response = await axios.get(url);
-        const data = response.data;
-
-        if (
-            data.rows &&
-            data.rows[0] &&
-            data.rows[0].elements &&
-            data.rows[0].elements[0].status === 'OK'
-        ) {
-            const distanceInMeters = data.rows[0].elemen
-            ts[0].distance.value;
-            const distanceInKm = distanceInMeters / 1000; 
-            return distanceInKm;
-        } else {
-            throw new Error('Não foi possível calcular a distância entre os endereços.');
-        }
-    } catch (error) {
-        console.error('Erro ao calcular distância:', error.message);
-        throw new Error('Erro ao calcular distância.');
-    }
-};
-
-// Função para calcular o preço da carona com base na distancia
-const calculatePrice = async (distance, seats) =>{
-    try {
-        const price = (distance*5)/seats;
-        return price;
-    } catch (error){
-        console.error('Erro ao calcular o preço da carona:', error.message);
-        throw new Error('Erro ao calcular o preço');
-    }
-}
 
 // Endpoint para criar uma nova viagem
 router.post('/', async (req, res) => {
