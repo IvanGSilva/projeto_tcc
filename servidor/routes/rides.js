@@ -157,8 +157,6 @@ router.get('/search', async (req, res) => {
         if (rides.length === 0) {
             return res.status(404).json({ error: 'Nenhuma carona encontrada com os filtros fornecidos.' });
         }
-        console.log(rides); // Verifique se os dados agora estão completos
-
         res.status(200).json(rides);
     } catch (error) {
         console.error('Erro ao buscar caronas:', error.message);
