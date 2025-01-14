@@ -23,7 +23,6 @@ export const searchRides = async (filters) => {
     }
 };
 
-
 // Função para criar uma nova carona
 export const createRide = async (rideData) => {
     const response = await axios.post(API_URL, rideData);
@@ -53,10 +52,14 @@ export const deleteRide = async (id) => {
     await axios.delete(`${API_URL}/${id}`);
 };
 
-// Função para reservar uma carona
-export const reserveRide = async (rideId) => {
+// Função para adicionar um passageiro a uma carona
+export const addPassengerToRide = async (rideId, userId) => {
     try {
-        const response = await api.post(`/rides/${rideId}/reserve`);
+        const response = await axios.put(
+            `${API_URL}/${rideId}/addPassenger`,
+            { loggedUserId: userId },
+            { withCredentials: true }
+        );
         return response.data;
     } catch (error) {
         throw error.response?.data?.error || 'Erro ao reservar a carona.';
@@ -81,7 +84,7 @@ const apiServices = {
     getRides,
     deleteRide,
 
-    reserveRide,
+    addPassengerToRide,
     cancelReservation,
 }
 
