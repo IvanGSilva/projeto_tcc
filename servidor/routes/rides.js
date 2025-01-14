@@ -130,6 +130,45 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+// Endpoint para adicionar um passageiro a uma carona
+router.put('/:id/addPassenger', async (req, res) => {
+    const { loggedUserId } = req.body;
+
+    if (!loggedUserId) {
+        return res.status(400).json({ error: 'Usuário não identificado.' });
+    }
+
+    try {
+        const ride = await Ride.findById(req.params.id);
+
+        if (!ride) {
+            return res.status(404).json({ error: 'Carona não encontrada.' });
+        }
+
+        // Verifica se o usuário já está na lista de passageiros
+        if (ride.passengers.includes(loggedUserId)) {
+            return res.status(400).json({ error: 'Usuário já reservado nesta carona.' });
+        }
+
+        // Verifica se ainda há assentos disponíveis
+        if (ride.passengers.length >= ride.seats) {
+            return res.status(400).json({ error: 'Carona lotada. Não há assentos disponíveis.' });
+        }
+
+        // Adiciona o passageiro
+        ride.passengers.push(loggedUserId);
+
+        // Salva a carona atualizada
+        await ride.save();
+
+        res.status(200).json({ message: 'Passageiro adicionado com sucesso.', ride });
+    } catch (error) {
+        console.error('Erro ao adicionar passageiro:', error.message);
+        res.status(500).json({ error: 'Erro ao adicionar passageiro.' });
+    }
+});
+
+
 // Endpoint para buscar caronas por origem e destino
 router.get('/search', async (req, res) => {
     const { origin, destination } = req.query;
