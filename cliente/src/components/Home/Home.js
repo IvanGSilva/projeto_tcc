@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { searchRides } from '../../services/api';
+import { searchRides, addPassengerToRide } from '../../services/api';
 import MapComponent from './Map/Map';
 import styles from './Home.module.css';
 
@@ -100,6 +100,20 @@ const Home = ({ loggedUserId }) => {
         setError(null);
     };
 
+    const handleReserveRide = async (rideId) => {
+        try {
+            const result = await addPassengerToRide(rideId, loggedUserId);
+            alert(result.message || 'Reserva realizada com sucesso!');
+            setRides((prevRides) =>
+                prevRides.map((ride) =>
+                    ride._id === rideId ? { ...ride, passengers: [...ride.passengers, loggedUserId] } : ride
+                )
+            );
+        } catch (error) {
+            alert(error);
+        }
+    };
+
     return (
         <div className={styles.content}>
             <div className={styles.container}>
@@ -140,15 +154,17 @@ const Home = ({ loggedUserId }) => {
                 {searchMade && rides.length > 0 && (
                     <ul className={styles.list}>
                         {rides.map((ride) => {
-                            // Formatar a data no formato dd/mm hh:mm
                             const rideDate = new Date(ride.date);
                             const formattedDate = rideDate.toLocaleString('pt-BR', {
                                 day: '2-digit',
                                 month: '2-digit',
                                 hour: '2-digit',
                                 minute: '2-digit',
-                                hour12: false
+                                hour12: false,
                             });
+
+                            const userAlreadyReserved = ride.passengers.includes(loggedUserId);
+
                             return (
                                 <li className={styles.listItem} key={ride._id}>
                                     <div className={styles.ride_result}>
@@ -164,7 +180,7 @@ const Home = ({ loggedUserId }) => {
                                             <div><strong>Origem:</strong> {formatAddress(ride.origin)}</div>
                                             <div><strong>Destino:</strong> {formatAddress(ride.destination)}</div>
                                             <div><strong>Data:</strong> {formattedDate}</div>
-                                            <div><strong>Assentos:</strong> {ride.seats}</div>
+                                            <div><strong>Assentos:</strong> {ride.seats - ride.passengers.length} disponíveis</div>
                                         </div>
 
                                         <div className={styles.driver_and_vehicle}>
@@ -192,8 +208,21 @@ const Home = ({ loggedUserId }) => {
                                             )}
                                         </div>
                                     </div>
+
+                                    <button
+                                        className={`${styles.button} ${userAlreadyReserved ? styles.reserved : ''
+                                            }`}
+                                        onClick={() => handleReserveRide(ride._id)}
+                                        disabled={userAlreadyReserved || ride.passengers.length >= ride.seats}
+                                    >
+                                        {userAlreadyReserved
+                                            ? 'Já reservado'
+                                            : ride.passengers.length >= ride.seats
+                                                ? 'Lotado'
+                                                : 'Reservar'}
+                                    </button>
                                 </li>
-                            )
+                            );
                         })}
                     </ul>
                 )}
