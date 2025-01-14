@@ -3,7 +3,7 @@ import styles from './RideList.module.css';
 
 const RideList = ({ loggedUserId, onEdit, onDelete, onComplete }) => {
     const [rides, setRides] = useState([]);
-    
+
     // Função para formatar a data corretamente considerando o fuso horário local
     const formatDate = (isoDate) => {
         const date = new Date(isoDate);
@@ -98,13 +98,14 @@ const RideList = ({ loggedUserId, onEdit, onDelete, onComplete }) => {
                                     <strong>Passageiros:</strong>
                                     <ul>
                                         {ride.passengers && ride.passengers.length > 0 ? (
-                                            ride.passengers.map((passenger, index) => (
-                                                <li key={index}>{passenger}</li>
+                                            ride.passengers.map((passenger) => (
+                                                <li key={passenger._id}>{passenger.username}</li> // Exibe o nome do passageiro
                                             ))
                                         ) : (
                                             <li>Nenhum passageiro pediu carona ainda</li>
                                         )}
                                     </ul>
+
                                 </div>
                             </div>
                             <div className={styles.actions}>
@@ -132,7 +133,7 @@ const RideList = ({ loggedUserId, onEdit, onDelete, onComplete }) => {
                                 {ride.status !== 'completed' && (
                                     <button
                                         className={styles.button}
-                                        onClick={() => handleCompleteRide(ride._id)} 
+                                        onClick={() => handleCompleteRide(ride._id)}
                                     >
                                         Finalizar Carona
                                     </button>

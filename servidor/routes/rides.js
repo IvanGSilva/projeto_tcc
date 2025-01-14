@@ -207,7 +207,8 @@ router.get('/search', async (req, res) => {
 router.get('/', async (req, res) => {
     const { loggedUserId } = req.query;
     try {
-        const rides = await Ride.find({ driver: loggedUserId });
+        const rides = await Ride.find({ driver: loggedUserId })
+        .populate('passengers', 'username');
         res.status(200).json(rides);
     } catch (error) {
         res.status(500).json({ error: error.message });
