@@ -1,0 +1,94 @@
+# Plataforma Web para Promover o Transporte Comunitário de Curtas Distâncias
+
+Este é um projeto de uma aplicação web de mobilidade urbana focado em melhorar o transporte de curta distância em pequenos centros. Inspirado no modelo do BlaBlaCar, o aplicativo oferece caronas para viagens intra-municipais em locais onde o transporte público é deficiente e serviços como Uber e 99 não estão disponíveis.
+
+---
+
+## 🚀 Funcionalidades
+
+- Cadastro de usuários e motoristas.
+- Pesquisa de caronas disponíveis por destino.
+- Solicitação de caronas em tempo real.
+- Histórico de viagens.
+- Mensagens entre passageiros e motoristas.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+### **Frontend**
+- **React.js**: Interface do usuário responsiva e dinâmica.
+
+### **Backend**
+- **Node.js** com Express.js: Para gerenciar as rotas e lógica do servidor.
+- **MongoDB**: Banco de dados NoSQL para armazenar usuários, viagens e mensagens.
+
+### **Outras Ferramentas**
+- **Visual Studio Code** (VSCode) para desenvolvimento.
+- **MongoDBCompass** para gerenciamento visual do banco de dados.
+- **Git e GitHub** para controle de versão.
+
+---
+
+## 📦 Como Executar o Projeto
+
+### 1. **Pré-requisitos**
+Certifique-se de ter as seguintes ferramentas instaladas:
+- **Node.js** (versão mais recente)
+- **Git**
+- **MongoDB** (certifique-se de que o servidor está rodando)
+
+### 2. **Clone o Repositório**
+```bash
+git clone https://github.com/seu-usuario/seu-repositorio.git
+cd seu-repositorio
+
+### 3. **Instale as dependências dentro da pasta servidor
+```bash
+npm install
+
+### 4. **Configure o arquivo .env dentro da pasta do servidor
+PORT=3000
+MONGO_URI=mongodb://localhost:27017/seu-banco-de-dados
+
+### 5. **Instale as dependências dentro da pasta cliente
+```bash
+npm install
+
+### 6. **Inicie o servidor e o cliente
+```bash (na pasta do servidor)
+nodemon .\index.js
+
+```bash (na pasta do cliente)
+npm start
+
+### 7. **Acesse a sua aplicação no navegador
+Acesse: http://localhost:3000
+
+📚Estrutura do Projeto:
+📁 projeto
+├── 📁 servidor
+│   ├── index.js          # Arquivo principal do servidor
+│   ├── 📁 routes         # Rotas da API
+│   ├── 📁 models         # Modelos do banco de dados
+│   ├── 📁 controllers    # Lógica do backend
+│   └── 📁 config         # Configurações (ex.: conexão com MongoDB)
+├── 📁 frontend
+│   ├── src/
+│   │   ├── App.js        # Componente principal do React
+│   │   ├── 📁 components # Componentes reutilizáveis
+│   │   ├── 📁 pages      # Páginas do projeto (ex.: Login, Cadastro)
+│   └── 📁 public         # Arquivos estáticos
+└── README.md             # Documentação do projeto
+
+🛡️ Licença
+Este projeto é licenciado sob a MIT License.
+
+👨‍💻 Contribuindo
+Sinta-se à vontade para contribuir com este projeto!
+Crie um fork com suas modificações, crie uma branch, envie seus commits e abra uma pull request!
+
+📞 Contato
+Autor: [Ivan Gonçalves da Silva]
+E-mail: [ivan.silva.dev@gmail.com]
+LinkedIn: www.linkedin.com/in/ivansilvadev
