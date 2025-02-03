@@ -55,7 +55,20 @@ MONGO_URI=mongodb://localhost:27017/seu-banco-de-dados
 ```bash
 npm install
 
-### 6. **Inicie o servidor e o cliente
+###6. **Crie uma conta na Google Cloud Console e gere uma APIkey(1) para as seguintes APIs com restrição por URL:
+```Maps JavaScript API;
+```Geocoding API;
+```Places API;
+```Directions API;
+
+###7. **Gere uma APIkey(2) para a seguinte API com restrição por IP:
+```Distance Matrix
+
+###8. **Crie os arquivos apikey.js em:
+```cliente>src>components>Home>Map para a apikey(1)
+```servidor>utils para a apikey(2)
+
+### 9. **Inicie o servidor e o cliente
 ```bash (na pasta do servidor)
 nodemon .\index.js
 
