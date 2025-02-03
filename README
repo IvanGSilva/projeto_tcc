@@ -80,19 +80,27 @@ Acesse: http://localhost:3000
 
 📚Estrutura do Projeto:
 📁 projeto
+├── 📁 cliente
+│   ├──📁 public         # Arquivos estáticos
+│   ├──📁 src/
+│       ├── 📁 components  # Componentes reutilizáveis e seus módulos de CSS
+│       |   ├── 📁 Home    # Componentes relacionados a Home
+│       |   ├── 📁 Ride    # Componentes relacionados a Caronas
+│       |   ├── 📁 User    # Componentes relacionados a Usuários
+│       |   └── 📁 Vehicle # Componentes relacionados a veículos
+│       ├── 📁 services    # API para comunicação com o backend
+│       └── App.js         # Componente principal do React
+|
 ├── 📁 servidor
-│   ├── index.js          # Arquivo principal do servidor
-│   ├── 📁 routes         # Rotas da API
-│   ├── 📁 models         # Modelos do banco de dados
-│   ├── 📁 controllers    # Lógica do backend
-│   └── 📁 config         # Configurações (ex.: conexão com MongoDB)
-├── 📁 frontend
-│   ├── src/
-│   │   ├── App.js        # Componente principal do React
-│   │   ├── 📁 components # Componentes reutilizáveis
-│   │   ├── 📁 pages      # Páginas do projeto (ex.: Login, Cadastro)
-│   └── 📁 public         # Arquivos estáticos
-└── README.md             # Documentação do projeto
+│   ├── 📁 models          # Modelos do banco de dados
+│   ├── 📁 routes          # Rotas e lógica interna do Sistema
+│   ├── 📁 uploads         # Pasta para armazenar imagens (avatar de usuários)
+│   |   ├── 📁 original    # Pasta para guardar a versão da imagem que foi enviada via upload
+│   |   └── 📁 webp        # Pasta para guardar a versão tratada das imagens
+│   ├── 📁 utils           # Pasta com utilitários do sistemas como validadores
+│   └── index.js           # Arquivo principal do servidor
+|
+└── README.md              # Documentação do projeto
 
 🛡️ Licença
 Este projeto é licenciado sob a MIT License.
