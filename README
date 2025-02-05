@@ -82,7 +82,7 @@ Acesse: http://localhost:3000
 📁 projeto
 ├── 📁 cliente
 │   ├──📁 public         # Arquivos estáticos
-│   ├──📁 src/
+│   └──📁 src/
 │       ├── 📁 components  # Componentes reutilizáveis e seus módulos de CSS
 │       |   ├── 📁 Home    # Componentes relacionados a Home
 │       |   ├── 📁 Ride    # Componentes relacionados a Caronas
